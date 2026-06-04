@@ -45,11 +45,11 @@
     }
     .nav-inner {
       max-width: 1120px; margin: 0 auto; padding: 0 2rem;
-      height: 48px; display: flex; align-items: center; justify-content: space-between;
+      height: 52px; display: flex; align-items: center; justify-content: space-between;
     }
     .nav-brand { font-family: 'Syne', sans-serif; font-size: 0.95rem; font-weight: 700; letter-spacing: 0.01em; color: var(--blue); }
     .nav-links { display: flex; gap: 1.5rem; list-style: none; }
-    .nav-links a { color: var(--ink2); font-size: 0.8rem; font-weight: 500; text-decoration: none; transition: color .15s; }
+    .nav-links a { color: var(--ink2); font-size: 0.88rem; font-weight: 500; text-decoration: none; transition: color .15s; }
     .nav-links a:hover { color: var(--blue); }
 
     /* ── Hero ── */
@@ -68,9 +68,9 @@
     .hero-badge {
       display: inline-flex; align-items: center; gap: 0.4rem;
       background: var(--blue-lt); border: 1px solid rgba(22,85,162,.2);
-      color: var(--blue); font-size: 0.68rem; font-weight: 700;
-      letter-spacing: 0.1em; text-transform: uppercase;
-      padding: 0.28rem 0.75rem; border-radius: 100px; margin-bottom: 0.9rem;
+      color: var(--blue); font-size: 0.75rem; font-weight: 600;
+      letter-spacing: 0.04em;
+      padding: 0.3rem 0.85rem; border-radius: 100px; margin-bottom: 0.9rem;
     }
     .bdot { width: 6px; height: 6px; border-radius: 50%; background: var(--blue); animation: blink 2s infinite; flex-shrink: 0; }
     @keyframes blink { 0%,100%{opacity:1} 50%{opacity:.25} }
@@ -106,8 +106,8 @@
     .hero-stats { border: 1px solid var(--border); border-radius: 10px; overflow: hidden; background: var(--white); animation: fadeUp .45s .28s ease both; }
     .hstat { padding: 0.85rem 1.1rem; border-bottom: 1px solid var(--border); }
     .hstat:last-child { border-bottom: none; }
-    .hstat-num { font-family: 'Syne', sans-serif; font-weight: 800; font-size: 1.75rem; color: var(--blue); display: block; line-height: 1; margin-bottom: 0.2rem; }
-    .hstat-lbl { font-size: 0.76rem; color: var(--ink2); line-height: 1.35; }
+    .hstat-num { font-family: 'Syne', sans-serif; font-weight: 800; font-size: 1.75rem; color: var(--blue); display: block; line-height: 1.15; margin-bottom: 0.3rem; }
+    .hstat-lbl { font-size: 0.82rem; color: var(--ink2); line-height: 1.5; }
 
     /* ── Shared section ── */
     .band { padding: 2.25rem 0; }
@@ -116,8 +116,8 @@
     .band-gray  { background: var(--gray-lt); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
     .inner { max-width: 1120px; margin: 0 auto; padding: 0 2rem; }
 
-    .s-eyebrow { font-size: 0.64rem; font-weight: 700; letter-spacing: 0.13em; text-transform: uppercase; color: var(--blue); margin-bottom: 0.2rem; }
-    .s-head { font-family: 'Syne', sans-serif; font-weight: 800; font-size: 1.05rem; color: var(--ink); margin-bottom: 1.1rem; }
+    .s-eyebrow { font-size: 0.72rem; font-weight: 700; letter-spacing: 0.07em; text-transform: uppercase; color: var(--blue); margin-bottom: 0.25rem; }
+    .s-head { font-family: 'Syne', sans-serif; font-weight: 800; font-size: 1.15rem; color: var(--ink); margin-bottom: 1.1rem; }
 
     /* ── Sources ── */
     .sources { display: grid; grid-template-columns: repeat(3,1fr); gap: 0.9rem; }
@@ -125,9 +125,9 @@
     .band-white .src { background: var(--gray-lt); }
     .src-top { display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.35rem; }
     .src-ico { font-size: 1rem; }
-    .src-name { font-weight: 700; font-size: 0.84rem; }
-    .src-tag { font-size: 0.64rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--cyan); margin-bottom: 0.35rem; }
-    .src-desc { font-size: 0.78rem; color: var(--ink2); line-height: 1.5; }
+    .src-name { font-weight: 700; font-size: 0.9rem; }
+    .src-tag { font-size: 0.72rem; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase; color: var(--cyan); margin-bottom: 0.4rem; }
+    .src-desc { font-size: 0.83rem; color: var(--ink2); line-height: 1.6; }
 
     /* ── Pipeline ── */
     .pipeline { display: flex; }
@@ -145,11 +145,11 @@
     .pdot.done   { background: var(--grn-lt); border-color: var(--green); color: var(--green); }
     .pdot.active { background: var(--blue-lt); border-color: var(--blue); color: var(--blue); box-shadow: 0 0 0 3px rgba(22,85,162,.12); }
     .pdot.todo   { background: var(--white); border-color: var(--border); color: var(--ink3); }
-    .p-title { font-weight: 700; font-size: 0.77rem; color: var(--ink); margin-bottom: 0.2rem; }
-    .p-desc  { font-size: 0.71rem; color: var(--ink2); line-height: 1.4; padding: 0 0.25rem; }
+    .p-title { font-weight: 700; font-size: 0.85rem; color: var(--ink); margin-bottom: 0.25rem; }
+    .p-desc  { font-size: 0.78rem; color: var(--ink2); line-height: 1.55; padding: 0 0.25rem; }
     .p-badge {
-      margin-top: 0.4rem; font-size: 0.6rem; font-weight: 700; letter-spacing: 0.06em;
-      text-transform: uppercase; padding: 0.12rem 0.5rem; border-radius: 100px;
+      margin-top: 0.45rem; font-size: 0.7rem; font-weight: 600; letter-spacing: 0.03em;
+      text-transform: uppercase; padding: 0.15rem 0.55rem; border-radius: 100px;
     }
     .p-badge.done   { background: var(--grn-lt); color: var(--green); }
     .p-badge.active { background: var(--blue-lt); color: var(--blue); }
@@ -159,9 +159,9 @@
     .charts { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
     .chart-card { background: var(--white); border: 1px solid var(--border); border-radius: 8px; padding: 1rem; }
     .chart-hd { display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.2rem; }
-    .chart-title { font-family: 'Syne', sans-serif; font-weight: 800; font-size: 0.8rem; color: var(--ink); }
-    .illus { font-size: 0.6rem; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; background: var(--amb-lt); border: 1px solid rgba(184,106,0,.25); color: var(--amber); padding: 0.1rem 0.45rem; border-radius: 4px; }
-    .chart-sub { font-size: 0.72rem; color: var(--ink3); margin-bottom: 0.85rem; line-height: 1.4; }
+    .chart-title { font-family: 'Syne', sans-serif; font-weight: 800; font-size: 0.9rem; color: var(--ink); }
+    .illus { font-size: 0.7rem; font-weight: 600; letter-spacing: 0.03em; text-transform: uppercase; background: var(--amb-lt); border: 1px solid rgba(184,106,0,.25); color: var(--amber); padding: 0.15rem 0.5rem; border-radius: 4px; }
+    .chart-sub { font-size: 0.8rem; color: var(--ink3); margin-bottom: 0.9rem; line-height: 1.5; }
     canvas { max-height: 210px; }
 
     /* ── About ── */
@@ -171,8 +171,8 @@
     .about-text .btn { margin-top: 0.25rem; }
 
     .status-box { background: var(--white); border: 1px solid var(--border); border-radius: 8px; padding: 1rem; }
-    .status-box-title { font-family: 'Syne', sans-serif; font-weight: 800; font-size: 0.8rem; color: var(--ink); margin-bottom: 0.7rem; }
-    .srow { display: flex; align-items: center; gap: 0.55rem; padding: 0.38rem 0; border-bottom: 1px solid var(--border); font-size: 0.78rem; color: var(--ink2); }
+    .status-box-title { font-family: 'Syne', sans-serif; font-weight: 800; font-size: 0.9rem; color: var(--ink); margin-bottom: 0.75rem; }
+    .srow { display: flex; align-items: center; gap: 0.55rem; padding: 0.42rem 0; border-bottom: 1px solid var(--border); font-size: 0.83rem; color: var(--ink2); }
     .srow:last-child { border-bottom: none; }
     .sdot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
     .sdot-g { background: var(--green); }
@@ -181,7 +181,7 @@
 
     /* ── Footer ── */
     .foot-wrap { background: var(--white); border-top: 1px solid var(--border); }
-    footer { max-width: 1120px; margin: 0 auto; padding: 1.25rem 2rem; display: flex; justify-content: space-between; align-items: center; font-size: 0.77rem; color: var(--ink3); }
+    footer { max-width: 1120px; margin: 0 auto; padding: 1.4rem 2rem; display: flex; justify-content: space-between; align-items: center; font-size: 0.83rem; color: var(--ink3); }
     footer a { color: var(--blue); text-decoration: none; }
     footer a:hover { text-decoration: underline; }
 
