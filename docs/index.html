@@ -3,651 +3,448 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Aircraft Engine Predictive Maintenance | Open-Source RUL Framework</title>
+  <title>Aircraft Engine Predictive Maintenance</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=Epilogue:wght@400;500;600;700&display=swap" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     :root {
-      --bg:       #0d1b2a;
-      --surface:  #12243a;
-      --surface2: #1a3252;
-      --border:   rgba(100,160,220,0.15);
-      --accent:   #2196F3;
-      --accent2:  #00BCD4;
-      --accent3:  #4CAF50;
-      --text:     #e2eaf5;
-      --subtext:  #7a9abf;
-      --badge-bg: rgba(33,150,243,0.12);
+      --blue:    #1655a2;
+      --blue-dk: #0e3d7a;
+      --blue-lt: #e8f0fb;
+      --cyan:    #0891b2;
+      --green:   #0d6e42;
+      --grn-lt:  #e5f5ee;
+      --amber:   #b86a00;
+      --amb-lt:  #fef2dc;
+      --ink:     #0c1d30;
+      --ink2:    #3d5872;
+      --ink3:    #8aa0b8;
+      --bg:      #f2f6fb;
+      --white:   #ffffff;
+      --border:  #d5e0ec;
+      --gray-lt: #f5f8fc;
     }
 
     html { scroll-behavior: smooth; }
+    body { font-family: 'Epilogue', system-ui, sans-serif; background: var(--bg); color: var(--ink); font-size: 14px; line-height: 1.55; }
 
-    body {
-      font-family: 'Inter', system-ui, sans-serif;
-      background: var(--bg);
-      color: var(--text);
-      line-height: 1.6;
+    /* top accent bar */
+    body::before {
+      content: ''; position: fixed; top: 0; left: 0; right: 0; height: 3px; z-index: 300;
+      background: linear-gradient(90deg, var(--blue) 0%, var(--cyan) 50%, var(--green) 100%);
     }
 
     /* ── Nav ── */
     nav {
-      position: sticky; top: 0; z-index: 100;
-      background: rgba(13,27,42,0.92);
-      backdrop-filter: blur(12px);
+      position: sticky; top: 3px; z-index: 200;
+      background: rgba(255,255,255,.96); backdrop-filter: blur(8px);
       border-bottom: 1px solid var(--border);
-      padding: 0 2rem;
-      display: flex; align-items: center; justify-content: space-between;
-      height: 56px;
     }
-    .nav-brand {
-      font-family: 'Space Grotesk', sans-serif;
-      font-weight: 700; font-size: 0.88rem;
-      letter-spacing: 0.05em; text-transform: uppercase;
-      color: var(--accent);
+    .nav-inner {
+      max-width: 1120px; margin: 0 auto; padding: 0 2rem;
+      height: 48px; display: flex; align-items: center; justify-content: space-between;
     }
+    .nav-brand { font-family: 'Syne', sans-serif; font-size: 0.75rem; font-weight: 800; letter-spacing: 0.1em; text-transform: uppercase; color: var(--blue); }
     .nav-links { display: flex; gap: 1.5rem; list-style: none; }
-    .nav-links a {
-      color: var(--subtext); text-decoration: none;
-      font-size: 0.85rem; font-weight: 500;
-      transition: color 0.2s;
-    }
-    .nav-links a:hover { color: var(--text); }
-
-    /* ── Shared layout ── */
-    .section-wrap { padding: 5rem 2rem; max-width: 1100px; margin: 0 auto; }
-    hr.divider { border: none; border-top: 1px solid var(--border); max-width: 1100px; margin: 0 auto; }
-
-    .section-label {
-      font-size: 0.72rem; font-weight: 700;
-      letter-spacing: 0.14em; text-transform: uppercase;
-      color: var(--accent); margin-bottom: 0.5rem;
-    }
-    .section-title {
-      font-family: 'Space Grotesk', sans-serif;
-      font-size: clamp(1.4rem, 3vw, 2rem); font-weight: 700;
-      margin-bottom: 0.8rem;
-    }
-    .section-desc { color: var(--subtext); max-width: 640px; font-size: 0.95rem; }
+    .nav-links a { color: var(--ink2); font-size: 0.8rem; font-weight: 500; text-decoration: none; transition: color .15s; }
+    .nav-links a:hover { color: var(--blue); }
 
     /* ── Hero ── */
+    .hero-wrap {
+      background: var(--white);
+      background-image: radial-gradient(circle, #c8d8ea 1px, transparent 1px);
+      background-size: 28px 28px;
+      border-bottom: 1px solid var(--border);
+    }
     .hero {
-      padding: 7rem 2rem 5rem;
-      text-align: center; max-width: 820px; margin: 0 auto;
+      max-width: 1120px; margin: 0 auto; padding: 3rem 2rem 2.75rem;
+      display: grid; grid-template-columns: 1fr 300px; gap: 3rem; align-items: center;
+      background: linear-gradient(to right, rgba(255,255,255,1) 55%, rgba(255,255,255,0.85));
     }
-    .badge {
-      display: inline-flex; align-items: center; gap: 0.45rem;
-      background: var(--badge-bg);
-      border: 1px solid rgba(33,150,243,0.3);
-      color: var(--accent);
-      font-size: 0.75rem; font-weight: 700;
-      letter-spacing: 0.07em; text-transform: uppercase;
-      padding: 0.35rem 0.9rem; border-radius: 100px;
-      margin-bottom: 1.75rem;
+
+    .hero-badge {
+      display: inline-flex; align-items: center; gap: 0.4rem;
+      background: var(--blue-lt); border: 1px solid rgba(22,85,162,.2);
+      color: var(--blue); font-size: 0.68rem; font-weight: 700;
+      letter-spacing: 0.1em; text-transform: uppercase;
+      padding: 0.28rem 0.75rem; border-radius: 100px; margin-bottom: 0.9rem;
     }
-    .badge-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--accent); animation: blink 2s infinite; }
-    @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.25} }
+    .bdot { width: 6px; height: 6px; border-radius: 50%; background: var(--blue); animation: blink 2s infinite; flex-shrink: 0; }
+    @keyframes blink { 0%,100%{opacity:1} 50%{opacity:.25} }
 
     h1 {
-      font-family: 'Space Grotesk', sans-serif;
-      font-size: clamp(2rem, 5vw, 3.25rem); font-weight: 700; line-height: 1.15;
-      margin-bottom: 1.1rem;
-      background: linear-gradient(135deg, #e2eaf5 0%, #90caf9 60%, #b2ebf2 100%);
-      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-      background-clip: text;
+      font-family: 'Syne', sans-serif; font-weight: 800;
+      font-size: clamp(1.75rem, 3.2vw, 2.5rem); line-height: 1.1;
+      letter-spacing: -0.025em; color: var(--ink); margin-bottom: 0.75rem;
     }
-    .tagline { font-size: 1.05rem; color: var(--subtext); max-width: 580px; margin: 0 auto 2.25rem; }
-    .hero-buttons { display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; }
+    h1 span { color: var(--blue); }
+
+    .hero-tagline { font-size: 0.9rem; color: var(--ink2); line-height: 1.7; max-width: 460px; margin-bottom: 1.5rem; }
 
     .btn {
-      display: inline-flex; align-items: center; gap: 0.45rem;
-      padding: 0.65rem 1.5rem; border-radius: 8px;
-      font-size: 0.88rem; font-weight: 600;
-      text-decoration: none; transition: all 0.2s;
-      cursor: pointer; border: none;
+      display: inline-flex; align-items: center; gap: 0.35rem;
+      background: var(--blue); color: #fff;
+      font-family: 'Epilogue', sans-serif; font-size: 0.8rem; font-weight: 700;
+      padding: 0.55rem 1.2rem; border-radius: 6px;
+      text-decoration: none; border: none; cursor: pointer;
+      transition: background .15s, transform .15s;
     }
-    .btn-primary { background: var(--accent); color: #fff; }
-    .btn-primary:hover { background: #1976D2; transform: translateY(-1px); }
-    .btn-outline { background: transparent; color: var(--text); border: 1px solid var(--border); }
-    .btn-outline:hover { border-color: var(--accent); color: var(--accent); }
+    .btn:hover { background: var(--blue-dk); transform: translateY(-1px); }
 
-    /* ── Mission ── */
-    .mission-text { margin-top: 2.5rem; max-width: 780px; }
-    .mission-text p { color: var(--subtext); line-height: 1.8; font-size: 0.95rem; margin-bottom: 1rem; }
-    .mission-text p strong { color: var(--text); }
+    /* Staggered fade-in */
+    @keyframes fadeUp { from { opacity:0; transform:translateY(10px); } to { opacity:1; transform:translateY(0); } }
+    .hero-left > * { animation: fadeUp .45s ease both; }
+    .hero-left > *:nth-child(1) { animation-delay: .04s; }
+    .hero-left > *:nth-child(2) { animation-delay: .1s; }
+    .hero-left > *:nth-child(3) { animation-delay: .16s; }
+    .hero-left > *:nth-child(4) { animation-delay: .22s; }
 
-    /* ── Metrics ── */
-    .metrics-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 1.5rem; margin-top: 2.5rem; }
-    .metric-card {
-      background: var(--surface); border: 1px solid var(--border);
-      border-radius: 12px; padding: 1.75rem 1.5rem; text-align: center;
-      transition: border-color 0.2s, transform 0.2s;
-    }
-    .metric-card:hover { border-color: rgba(33,150,243,0.45); transform: translateY(-3px); }
-    .metric-value {
-      font-family: 'Space Grotesk', sans-serif;
-      font-size: 2.2rem; font-weight: 700; color: var(--accent); margin-bottom: 0.5rem;
-    }
-    .metric-label { font-size: 0.87rem; color: var(--subtext); line-height: 1.45; }
+    /* Stats column */
+    .hero-stats { border: 1px solid var(--border); border-radius: 10px; overflow: hidden; background: var(--white); animation: fadeUp .45s .28s ease both; }
+    .hstat { padding: 0.85rem 1.1rem; border-bottom: 1px solid var(--border); }
+    .hstat:last-child { border-bottom: none; }
+    .hstat-num { font-family: 'Syne', sans-serif; font-weight: 800; font-size: 1.75rem; color: var(--blue); display: block; line-height: 1; margin-bottom: 0.2rem; }
+    .hstat-lbl { font-size: 0.76rem; color: var(--ink2); line-height: 1.35; }
 
-    /* ── Data Sources ── */
-    .sources-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 1.5rem; margin-top: 2.5rem; }
-    .source-card {
-      background: var(--surface); border: 1px solid var(--border);
-      border-radius: 12px; padding: 1.75rem;
-      transition: border-color 0.2s, transform 0.2s;
-    }
-    .source-card:hover { border-color: rgba(0,188,212,0.4); transform: translateY(-2px); }
-    .source-icon {
-      width: 44px; height: 44px; border-radius: 10px;
-      display: flex; align-items: center; justify-content: center;
-      font-size: 1.3rem; margin-bottom: 1rem;
-    }
-    .icon-nasa  { background: rgba(33,150,243,0.15); }
-    .icon-faa   { background: rgba(0,188,212,0.15); }
-    .icon-bts   { background: rgba(76,175,80,0.15); }
-    .source-name { font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: 1rem; margin-bottom: 0.25rem; }
-    .source-tag { font-size: 0.7rem; color: var(--accent2); font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 0.75rem; }
-    .source-desc { font-size: 0.87rem; color: var(--subtext); line-height: 1.6; }
+    /* ── Shared section ── */
+    .band { padding: 2.25rem 0; }
+    .band + .band { border-top: 1px solid var(--border); }
+    .band-white { background: var(--white); }
+    .band-gray  { background: var(--gray-lt); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
+    .inner { max-width: 1120px; margin: 0 auto; padding: 0 2rem; }
+
+    .s-eyebrow { font-size: 0.64rem; font-weight: 700; letter-spacing: 0.13em; text-transform: uppercase; color: var(--blue); margin-bottom: 0.2rem; }
+    .s-head { font-family: 'Syne', sans-serif; font-weight: 800; font-size: 1.05rem; color: var(--ink); margin-bottom: 1.1rem; }
+
+    /* ── Sources ── */
+    .sources { display: grid; grid-template-columns: repeat(3,1fr); gap: 0.9rem; }
+    .src { background: var(--white); border: 1px solid var(--border); border-radius: 8px; padding: 0.95rem 1rem; }
+    .band-white .src { background: var(--gray-lt); }
+    .src-top { display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.35rem; }
+    .src-ico { font-size: 1rem; }
+    .src-name { font-weight: 700; font-size: 0.84rem; }
+    .src-tag { font-size: 0.64rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--cyan); margin-bottom: 0.35rem; }
+    .src-desc { font-size: 0.78rem; color: var(--ink2); line-height: 1.5; }
 
     /* ── Pipeline ── */
-    .pipeline { display: flex; align-items: flex-start; margin-top: 2.5rem; }
-    .pipe-step {
-      flex: 1; display: flex; flex-direction: column;
-      align-items: center; text-align: center; position: relative;
-    }
+    .pipeline { display: flex; }
+    .pipe-step { flex: 1; display: flex; flex-direction: column; align-items: center; text-align: center; position: relative; }
     .pipe-step:not(:last-child)::after {
-      content: '';
-      position: absolute; top: 23px; left: 50%;
-      width: 100%; height: 2px;
-      background: linear-gradient(90deg, var(--accent), var(--accent2));
-      z-index: 0;
+      content: ''; position: absolute; top: 13px; left: 50%; width: 100%; height: 2px;
+      background: linear-gradient(90deg, var(--blue), #64a0d4); z-index: 0;
     }
-    .pipe-num {
-      width: 48px; height: 48px; border-radius: 50%;
-      background: var(--surface2); border: 2px solid var(--accent);
+    .pdot {
+      width: 26px; height: 26px; border-radius: 50%;
       display: flex; align-items: center; justify-content: center;
-      font-family: 'Space Grotesk', sans-serif; font-weight: 700;
-      font-size: 1rem; color: var(--accent);
-      position: relative; z-index: 1; margin-bottom: 1rem;
+      font-family: 'Syne', sans-serif; font-size: 0.72rem; font-weight: 800;
+      position: relative; z-index: 1; margin-bottom: 0.55rem; border: 2px solid;
     }
-    .pipe-title { font-weight: 700; font-size: 0.9rem; margin-bottom: 0.35rem; }
-    .pipe-desc { font-size: 0.8rem; color: var(--subtext); line-height: 1.5; padding: 0 0.4rem; }
-    .pipe-status {
-      margin-top: 0.75rem;
-      font-size: 0.68rem; font-weight: 700;
-      letter-spacing: 0.06em; text-transform: uppercase;
-      padding: 0.2rem 0.65rem; border-radius: 100px;
+    .pdot.done   { background: var(--grn-lt); border-color: var(--green); color: var(--green); }
+    .pdot.active { background: var(--blue-lt); border-color: var(--blue); color: var(--blue); box-shadow: 0 0 0 3px rgba(22,85,162,.12); }
+    .pdot.todo   { background: var(--white); border-color: var(--border); color: var(--ink3); }
+    .p-title { font-weight: 700; font-size: 0.77rem; color: var(--ink); margin-bottom: 0.2rem; }
+    .p-desc  { font-size: 0.71rem; color: var(--ink2); line-height: 1.4; padding: 0 0.25rem; }
+    .p-badge {
+      margin-top: 0.4rem; font-size: 0.6rem; font-weight: 700; letter-spacing: 0.06em;
+      text-transform: uppercase; padding: 0.12rem 0.5rem; border-radius: 100px;
     }
-    .status-done     { background: rgba(76,175,80,0.15);  color: #4CAF50; }
-    .status-progress { background: rgba(33,150,243,0.15); color: var(--accent); }
-    .status-planned  { background: rgba(120,140,160,0.1); color: var(--subtext); }
+    .p-badge.done   { background: var(--grn-lt); color: var(--green); }
+    .p-badge.active { background: var(--blue-lt); color: var(--blue); }
+    .p-badge.todo   { background: transparent; border: 1px solid var(--border); color: var(--ink3); }
 
     /* ── Charts ── */
-    .charts-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; margin-top: 2.5rem; }
-    .chart-card {
-      background: var(--surface); border: 1px solid var(--border);
-      border-radius: 12px; padding: 1.5rem;
-    }
-    .chart-title { font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: 0.95rem; margin-bottom: 0.2rem; }
-    .chart-subtitle { font-size: 0.78rem; color: var(--subtext); margin-bottom: 1.25rem; line-height: 1.45; }
-    .schematic-tag {
-      display: inline-block;
-      background: rgba(255,193,7,0.1); border: 1px solid rgba(255,193,7,0.3);
-      color: #FFC107; font-size: 0.66rem; font-weight: 700;
-      letter-spacing: 0.06em; text-transform: uppercase;
-      padding: 0.15rem 0.5rem; border-radius: 4px;
-      margin-left: 0.5rem; vertical-align: middle;
-    }
-    canvas { max-height: 280px; }
+    .charts { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+    .chart-card { background: var(--white); border: 1px solid var(--border); border-radius: 8px; padding: 1rem; }
+    .chart-hd { display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.2rem; }
+    .chart-title { font-family: 'Syne', sans-serif; font-weight: 800; font-size: 0.8rem; color: var(--ink); }
+    .illus { font-size: 0.6rem; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; background: var(--amb-lt); border: 1px solid rgba(184,106,0,.25); color: var(--amber); padding: 0.1rem 0.45rem; border-radius: 4px; }
+    .chart-sub { font-size: 0.72rem; color: var(--ink3); margin-bottom: 0.85rem; line-height: 1.4; }
+    canvas { max-height: 210px; }
 
     /* ── About ── */
-    .about-grid { display: grid; grid-template-columns: 3fr 2fr; gap: 2rem; margin-top: 2.5rem; }
-    .about-text p { font-size: 0.95rem; color: var(--subtext); line-height: 1.8; margin-bottom: 1rem; }
-    .about-text p strong { color: var(--text); }
-    .status-card {
-      background: var(--surface); border: 1px solid var(--border);
-      border-radius: 12px; padding: 1.5rem;
-    }
-    .status-card-title {
-      font-family: 'Space Grotesk', sans-serif; font-weight: 700;
-      font-size: 0.95rem; margin-bottom: 1rem;
-    }
-    .status-row {
-      display: flex; align-items: center; gap: 0.75rem;
-      padding: 0.6rem 0; border-bottom: 1px solid var(--border);
-      font-size: 0.87rem; color: var(--subtext);
-    }
-    .status-row:last-child { border-bottom: none; }
-    .sdot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
-    .sdot-green { background: #4CAF50; }
-    .sdot-blue  { background: var(--accent); animation: blink 2s infinite; }
-    .sdot-gray  { background: #3a5068; }
+    .about-grid { display: grid; grid-template-columns: 1fr 270px; gap: 2rem; }
+    .about-text p { font-size: 0.86rem; color: var(--ink2); line-height: 1.75; margin-bottom: 0.75rem; }
+    .about-text p strong { color: var(--ink); }
+    .about-text .btn { margin-top: 0.25rem; }
+
+    .status-box { background: var(--white); border: 1px solid var(--border); border-radius: 8px; padding: 1rem; }
+    .status-box-title { font-family: 'Syne', sans-serif; font-weight: 800; font-size: 0.8rem; color: var(--ink); margin-bottom: 0.7rem; }
+    .srow { display: flex; align-items: center; gap: 0.55rem; padding: 0.38rem 0; border-bottom: 1px solid var(--border); font-size: 0.78rem; color: var(--ink2); }
+    .srow:last-child { border-bottom: none; }
+    .sdot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
+    .sdot-g { background: var(--green); }
+    .sdot-b { background: var(--blue); animation: blink 2s infinite; }
+    .sdot-x { background: var(--border); }
 
     /* ── Footer ── */
-    footer {
-      border-top: 1px solid var(--border);
-      padding: 2rem; text-align: center;
-      font-size: 0.82rem; color: var(--subtext);
-    }
-    footer a { color: var(--accent); text-decoration: none; }
+    .foot-wrap { background: var(--white); border-top: 1px solid var(--border); }
+    footer { max-width: 1120px; margin: 0 auto; padding: 1.25rem 2rem; display: flex; justify-content: space-between; align-items: center; font-size: 0.77rem; color: var(--ink3); }
+    footer a { color: var(--blue); text-decoration: none; }
     footer a:hover { text-decoration: underline; }
 
     /* ── Responsive ── */
     @media (max-width: 768px) {
-      .metrics-grid, .sources-grid, .charts-grid, .about-grid {
-        grid-template-columns: 1fr;
-      }
-      .pipeline { flex-direction: column; gap: 2rem; align-items: flex-start; padding-left: 1.5rem; }
-      .pipe-step { align-items: flex-start; text-align: left; flex-direction: row; gap: 1rem; }
+      .hero, .about-grid { grid-template-columns: 1fr; gap: 1.5rem; }
+      .sources, .charts  { grid-template-columns: 1fr; }
+      .pipeline { flex-direction: column; align-items: flex-start; gap: 1rem; padding-left: 0.75rem; }
+      .pipe-step { flex-direction: row; text-align: left; align-items: flex-start; gap: 0.75rem; }
       .pipe-step:not(:last-child)::after { display: none; }
-      .pipe-num { flex-shrink: 0; margin-bottom: 0; }
+      .pdot { flex-shrink: 0; margin-bottom: 0; margin-top: 0.1rem; }
       nav .nav-links { display: none; }
+      footer { flex-direction: column; gap: 0.4rem; text-align: center; }
     }
   </style>
 </head>
 <body>
 
-<!-- ── Navigation ── -->
+<!-- ── Nav ── -->
 <nav>
-  <span class="nav-brand">Engine Predictive Maintenance</span>
-  <ul class="nav-links">
-    <li><a href="#mission">Mission</a></li>
-    <li><a href="#data">Data</a></li>
-    <li><a href="#methodology">Methodology</a></li>
-    <li><a href="#results">Results</a></li>
-    <li><a href="#about">About</a></li>
-  </ul>
+  <div class="nav-inner">
+    <span class="nav-brand">Engine Predictive Maintenance</span>
+    <ul class="nav-links">
+      <li><a href="#data">Data</a></li>
+      <li><a href="#pipeline">Pipeline</a></li>
+      <li><a href="#results">Results</a></li>
+      <li><a href="#about">About</a></li>
+    </ul>
+  </div>
 </nav>
 
 <!-- ── Hero ── -->
-<div class="hero">
-  <div class="badge">
-    <span class="badge-dot"></span>
-    Active Study — Launched March 2026
-  </div>
-  <h1>Predictive Maintenance Framework for Aircraft Engines</h1>
-  <p class="tagline">
-    An open-source Remaining Useful Life prediction system that makes data-driven engine maintenance
-    accessible to every U.S. aviation operator — including small regional carriers.
-  </p>
-  <div class="hero-buttons">
-    <a href="https://github.com/arnav64/engine-predictive-maintenance" target="_blank" class="btn btn-primary">
-      View on GitHub
-    </a>
-    <a href="#methodology" class="btn btn-outline">Explore Methodology ↓</a>
-  </div>
-</div>
-
-<hr class="divider">
-
-<!-- ── Mission ── -->
-<div class="section-wrap" id="mission">
-  <div class="section-label">Mission</div>
-  <h2 class="section-title">Reducing Unplanned Aircraft Groundings Nationwide</h2>
-  <div class="mission-text">
-    <p>
-      Unplanned aircraft groundings have reached record levels across the United States.
-      A core driver is that <strong>predictive engine maintenance has historically required
-      costly enterprise systems</strong> — placing it out of reach for the small regional carriers
-      that are critical to the U.S. aviation network.
-    </p>
-    <p>
-      This study synthesizes <strong>NASA engine performance data</strong>,
-      <strong>FAA Service Difficulty Reports</strong>, and
-      <strong>Bureau of Transportation Statistics records</strong> to model the
-      Remaining Useful Life (RUL) of aircraft engines. Predictions are validated against real
-      U.S. flight network data to quantify their operational impact.
-    </p>
-    <p>
-      Because this framework is <strong>open-source and publicly available</strong>, it is
-      nationally scalable — not proprietary to any single organization — ensuring that
-      data-driven predictive maintenance capabilities are accessible across the entire
-      U.S. aviation system.
-    </p>
-  </div>
-</div>
-
-<hr class="divider">
-
-<!-- ── Impact Metrics ── -->
-<div class="section-wrap" id="impact">
-  <div class="section-label">Projected Impact</div>
-  <h2 class="section-title">Measurable Operational Outcomes</h2>
-  <p class="section-desc">
-    Validated against real U.S. flight network data, the framework targets quantifiable
-    reductions in downtime and cost across the aviation supply chain.
-  </p>
-  <div class="metrics-grid">
-    <div class="metric-card">
-      <div class="metric-value">15–25%</div>
-      <div class="metric-label">Projected reduction in unplanned aircraft downtime</div>
+<div class="hero-wrap">
+  <div class="hero">
+    <div class="hero-left">
+      <div class="hero-badge"><span class="bdot"></span> Active Study — March 2026</div>
+      <h1>Predictive Maintenance<br>Framework for <span>Aircraft Engines</span></h1>
+      <p class="hero-tagline">
+        An open-source Remaining Useful Life prediction system synthesizing NASA engine data,
+        FAA maintenance records, and BTS flight operations — freely available to every U.S. aviation operator.
+      </p>
+      <a href="https://github.com/arnav64/engine-predictive-maintenance" target="_blank" class="btn">View on GitHub ↗</a>
     </div>
-    <div class="metric-card">
-      <div class="metric-value">100%</div>
-      <div class="metric-label">Open-source &amp; freely available to all U.S. aviation operators</div>
-    </div>
-    <div class="metric-card">
-      <div class="metric-value">6.5M+</div>
-      <div class="metric-label">Multivariate sensor readings across the training dataset</div>
+    <div class="hero-stats">
+      <div class="hstat">
+        <span class="hstat-num">15–25%</span>
+        <span class="hstat-lbl">projected reduction in unplanned aircraft downtime</span>
+      </div>
+      <div class="hstat">
+        <span class="hstat-num">100%</span>
+        <span class="hstat-lbl">open-source, freely available to U.S. operators</span>
+      </div>
+      <div class="hstat">
+        <span class="hstat-num">6.5M+</span>
+        <span class="hstat-lbl">multivariate sensor readings in training dataset</span>
+      </div>
     </div>
   </div>
 </div>
-
-<hr class="divider">
 
 <!-- ── Data Sources ── -->
-<div class="section-wrap" id="data">
-  <div class="section-label">Data Sources</div>
-  <h2 class="section-title">Built on Public Aviation Data</h2>
-  <p class="section-desc">
-    The framework synthesizes three complementary public datasets to connect simulated
-    engine physics with real-world operational outcomes.
-  </p>
-  <div class="sources-grid">
-    <div class="source-card">
-      <div class="source-icon icon-nasa">🛸</div>
-      <div class="source-name">NASA N-CMAPSS</div>
-      <div class="source-tag">Engine Physics</div>
-      <div class="source-desc">
-        Commercial Modular Aero-Propulsion System Simulation — high-fidelity turbofan degradation
-        data with 14 physical sensors (temperatures, pressures, speeds, fuel flow) across
-        6.5 million flight records. Provides ground-truth RUL labels for model training.
+<div class="band band-white" id="data">
+  <div class="inner">
+    <div class="s-eyebrow">Data Sources</div>
+    <div class="s-head">Built on Three Public Aviation Datasets</div>
+    <div class="sources">
+      <div class="src">
+        <div class="src-top"><span class="src-ico">🛸</span><span class="src-name">NASA N-CMAPSS</span></div>
+        <div class="src-tag">Engine Physics</div>
+        <div class="src-desc">High-fidelity turbofan degradation simulation with 14 physical sensors across 6.5M flight records. Provides ground-truth RUL labels for model training.</div>
       </div>
-    </div>
-    <div class="source-card">
-      <div class="source-icon icon-faa">✈️</div>
-      <div class="source-name">FAA Service Difficulty Reports</div>
-      <div class="source-tag">Maintenance Events</div>
-      <div class="source-desc">
-        Reported mechanical problems and unscheduled maintenance events from U.S. operators —
-        used to validate model predictions against real-world failure patterns and
-        cross-reference ground incidents.
+      <div class="src">
+        <div class="src-top"><span class="src-ico">✈️</span><span class="src-name">FAA Service Difficulty Reports</span></div>
+        <div class="src-tag">Maintenance Events</div>
+        <div class="src-desc">U.S. operator-reported mechanical problems and unscheduled maintenance — used to validate predictions against real-world failure patterns.</div>
       </div>
-    </div>
-    <div class="source-card">
-      <div class="source-icon icon-bts">📊</div>
-      <div class="source-name">Bureau of Transportation Statistics</div>
-      <div class="source-tag">Flight Operations</div>
-      <div class="source-desc">
-        Comprehensive U.S. flight schedule, delay, and cancellation records — used to
-        quantify the downstream operational and financial cost of unplanned groundings
-        across the national aviation network.
+      <div class="src">
+        <div class="src-top"><span class="src-ico">📊</span><span class="src-name">Bureau of Transportation Statistics</span></div>
+        <div class="src-tag">Flight Operations</div>
+        <div class="src-desc">U.S. flight schedules, delays, and cancellations — used to quantify the operational and financial impact of unplanned groundings.</div>
       </div>
     </div>
   </div>
 </div>
 
-<hr class="divider">
-
-<!-- ── Methodology Pipeline ── -->
-<div class="section-wrap" id="methodology">
-  <div class="section-label">Methodology</div>
-  <h2 class="section-title">Four-Stage Open-Source Pipeline</h2>
-  <p class="section-desc">
-    From raw sensor telemetry to actionable maintenance recommendations — a fully reproducible,
-    open-source pipeline designed to run on standard hardware.
-  </p>
-  <div class="pipeline">
-    <div class="pipe-step">
-      <div class="pipe-num">1</div>
-      <div class="pipe-title">Data Ingestion</div>
-      <div class="pipe-desc">Download and validate NASA N-CMAPSS HDF5 archives; parse FAA SDR and BTS flight records.</div>
-      <div class="pipe-status status-done">Complete</div>
-    </div>
-    <div class="pipe-step">
-      <div class="pipe-num">2</div>
-      <div class="pipe-title">Feature Engineering</div>
-      <div class="pipe-desc">Compute rolling degradation rates, flight-condition-normalized sensor baselines, and cycle-level health indices.</div>
-      <div class="pipe-status status-progress">In Progress</div>
-    </div>
-    <div class="pipe-step">
-      <div class="pipe-num">3</div>
-      <div class="pipe-title">RUL Prediction</div>
-      <div class="pipe-desc">Train gradient-boosted and time-series models to estimate remaining engine life; cross-validate across flight classes.</div>
-      <div class="pipe-status status-planned">Planned</div>
-    </div>
-    <div class="pipe-step">
-      <div class="pipe-num">4</div>
-      <div class="pipe-title">Operational Validation</div>
-      <div class="pipe-desc">Map RUL predictions to BTS flight schedules; quantify ground-time savings and supply chain cost impact.</div>
-      <div class="pipe-status status-planned">Planned</div>
+<!-- ── Pipeline ── -->
+<div class="band" id="pipeline">
+  <div class="inner">
+    <div class="s-eyebrow">Methodology</div>
+    <div class="s-head">Four-Stage Open-Source Pipeline</div>
+    <div class="pipeline">
+      <div class="pipe-step">
+        <div class="pdot done">1</div>
+        <div class="p-title">Data Ingestion</div>
+        <div class="p-desc">Download &amp; validate NASA HDF5 archives; parse FAA SDR and BTS records.</div>
+        <div class="p-badge done">Complete</div>
+      </div>
+      <div class="pipe-step">
+        <div class="pdot active">2</div>
+        <div class="p-title">Feature Engineering</div>
+        <div class="p-desc">Rolling degradation rates, flight-normalized baselines, cycle-level health indices.</div>
+        <div class="p-badge active">In Progress</div>
+      </div>
+      <div class="pipe-step">
+        <div class="pdot todo">3</div>
+        <div class="p-title">RUL Prediction</div>
+        <div class="p-desc">Gradient-boosted &amp; time-series models, cross-validated across flight classes.</div>
+        <div class="p-badge todo">Planned</div>
+      </div>
+      <div class="pipe-step">
+        <div class="pdot todo">4</div>
+        <div class="p-title">Operational Validation</div>
+        <div class="p-desc">Map predictions to BTS schedules; quantify ground-time and cost savings.</div>
+        <div class="p-badge todo">Planned</div>
+      </div>
     </div>
   </div>
 </div>
 
-<hr class="divider">
-
-<!-- ── Schematic Results ── -->
-<div class="section-wrap" id="results">
-  <div class="section-label">Preliminary Results</div>
-  <h2 class="section-title">Sensor Degradation &amp; RUL Patterns</h2>
-  <p class="section-desc">
-    Initial exploratory analysis of the N-CMAPSS DS02 dataset reveals consistent, learnable
-    degradation signatures across all 9 engines. The visualizations below illustrate the
-    data structure that informs model training.
-  </p>
-  <div class="charts-grid">
-    <div class="chart-card">
-      <div class="chart-title">
-        Sensor Degradation Trends
-        <span class="schematic-tag">Illustrative</span>
+<!-- ── Charts ── -->
+<div class="band band-gray" id="results">
+  <div class="inner">
+    <div class="s-eyebrow">Preliminary Results</div>
+    <div class="s-head">Exploratory Analysis: N-CMAPSS DS02</div>
+    <div class="charts">
+      <div class="chart-card">
+        <div class="chart-hd">
+          <span class="chart-title">Sensor Degradation Trends</span>
+          <span class="illus">Illustrative</span>
+        </div>
+        <div class="chart-sub">4 physical sensors over ~80 cycles · bold = 7-cycle rolling average</div>
+        <canvas id="sensorChart"></canvas>
       </div>
-      <div class="chart-subtitle">
-        Representative physical sensor response over ~80 flight cycles.
-        Faint lines show per-cycle readings; bold lines show 7-cycle rolling average.
+      <div class="chart-card">
+        <div class="chart-hd">
+          <span class="chart-title">Remaining Useful Life Countdown</span>
+          <span class="illus">Illustrative</span>
+        </div>
+        <div class="chart-sub">9 engines, N-CMAPSS DS02 dev set · RUL cycles remaining to failure</div>
+        <canvas id="rulChart"></canvas>
       </div>
-      <canvas id="sensorChart"></canvas>
-    </div>
-    <div class="chart-card">
-      <div class="chart-title">
-        Remaining Useful Life Countdown
-        <span class="schematic-tag">Illustrative</span>
-      </div>
-      <div class="chart-subtitle">
-        9 turbofan engines from the N-CMAPSS DS02 development set.
-        RUL cycles remaining to failure — the quantity the model is trained to predict.
-      </div>
-      <canvas id="rulChart"></canvas>
     </div>
   </div>
 </div>
-
-<hr class="divider">
 
 <!-- ── About ── -->
-<div class="section-wrap" id="about">
-  <div class="section-label">About</div>
-  <h2 class="section-title">Active Open-Source Research</h2>
-  <div class="about-grid">
-    <div class="about-text">
-      <p>
-        This study was launched in <strong>March 2026</strong> by
-        <strong>Arnav Prashant Joshi</strong>, a researcher specializing in data synthesis and
-        optimization for complex operational systems. The predictive maintenance framework is being
-        developed as a fully open-source contribution to U.S. aviation infrastructure.
-      </p>
-      <p>
-        All code, data pipelines, and model artifacts will be publicly released upon project
-        completion. The framework is designed to run on standard hardware without specialized
-        enterprise infrastructure, ensuring accessibility for small and regional carriers across
-        the U.S. aviation network.
-      </p>
-      <a href="https://github.com/arnav64/engine-predictive-maintenance" target="_blank"
-         class="btn btn-outline" style="margin-top:0.5rem;">
-        View Source Code →
-      </a>
-    </div>
-    <div>
-      <div class="status-card">
-        <div class="status-card-title">Project Status</div>
-        <div class="status-row"><div class="sdot sdot-green"></div> Data download &amp; validation pipeline</div>
-        <div class="status-row"><div class="sdot sdot-green"></div> Exploratory sensor analysis (DS02)</div>
-        <div class="status-row"><div class="sdot sdot-blue"></div> Feature engineering &amp; health indexing</div>
-        <div class="status-row"><div class="sdot sdot-gray"></div> RUL model training &amp; validation</div>
-        <div class="status-row"><div class="sdot sdot-gray"></div> Operational impact analysis (BTS)</div>
-        <div class="status-row"><div class="sdot sdot-gray"></div> Public framework release</div>
+<div class="band band-white" id="about">
+  <div class="inner">
+    <div class="s-eyebrow">About</div>
+    <div class="s-head">Open-Source Research for U.S. Aviation Infrastructure</div>
+    <div class="about-grid">
+      <div class="about-text">
+        <p>
+          This study was launched in <strong>March 2026</strong> by <strong>Arnav Prashant Joshi</strong>,
+          a researcher specializing in data synthesis and optimization for complex operational systems.
+          The goal is to close a long-standing gap: predictive engine maintenance has historically required
+          costly enterprise systems, placing it out of reach for small regional carriers that are critical to
+          the U.S. aviation network.
+        </p>
+        <p>
+          All code, pipelines, and model artifacts will be publicly released upon completion.
+          The framework is designed to run on standard hardware — no specialized enterprise infrastructure
+          required — ensuring data-driven maintenance is accessible across the entire U.S. aviation system.
+        </p>
+        <a href="https://github.com/arnav64/engine-predictive-maintenance" target="_blank" class="btn">View Source Code ↗</a>
+      </div>
+      <div>
+        <div class="status-box">
+          <div class="status-box-title">Project Status</div>
+          <div class="srow"><div class="sdot sdot-g"></div>Data download &amp; validation pipeline</div>
+          <div class="srow"><div class="sdot sdot-g"></div>Exploratory sensor analysis (DS02)</div>
+          <div class="srow"><div class="sdot sdot-b"></div>Feature engineering &amp; health indexing</div>
+          <div class="srow"><div class="sdot sdot-x"></div>RUL model training &amp; validation</div>
+          <div class="srow"><div class="sdot sdot-x"></div>Operational impact analysis (BTS)</div>
+          <div class="srow"><div class="sdot sdot-x"></div>Public framework release</div>
+        </div>
       </div>
     </div>
   </div>
 </div>
 
 <!-- ── Footer ── -->
-<footer>
-  <p>Open-source predictive maintenance for U.S. aviation infrastructure &middot; Arnav Prashant Joshi &middot; 2026</p>
-  <p style="margin-top:0.5rem;">
-    <a href="https://github.com/arnav64/engine-predictive-maintenance" target="_blank">
-      github.com/arnav64/engine-predictive-maintenance
-    </a>
-  </p>
-</footer>
+<div class="foot-wrap">
+  <footer>
+    <span>Open-source predictive maintenance for U.S. aviation · Arnav Prashant Joshi · 2026</span>
+    <a href="https://github.com/arnav64/engine-predictive-maintenance" target="_blank">github.com/arnav64/engine-predictive-maintenance</a>
+  </footer>
+</div>
 
-<!-- ── Charts ── -->
 <script>
-Chart.defaults.color        = '#7a9abf';
-Chart.defaults.borderColor  = 'rgba(100,160,220,0.1)';
-Chart.defaults.font.family  = "'Inter', system-ui, sans-serif";
-Chart.defaults.font.size    = 11;
+Chart.defaults.color       = '#8aa0b8';
+Chart.defaults.borderColor = 'rgba(0,0,0,0.06)';
+Chart.defaults.font.family = "'Epilogue', system-ui, sans-serif";
+Chart.defaults.font.size   = 10;
 
-// Deterministic PRNG so charts look the same on every load
-let _seed = 42;
-function rand() {
-  _seed = (_seed * 1664525 + 1013904223) >>> 0;
-  return _seed / 4294967296;
+let _s = 42;
+function rnd() { _s = (_s * 1664525 + 1013904223) >>> 0; return _s / 4294967296; }
+function series(n, start, slope, noise) {
+  return Array.from({length: n}, (_, i) => parseFloat((start + slope * i + (rnd() - .5) * noise).toFixed(3)));
 }
-
-function genSeries(len, start, slope, noise) {
-  return Array.from({length: len}, (_, i) => {
-    const v = start + slope * i + (rand() - 0.5) * noise;
-    return parseFloat(v.toFixed(3));
+function roll(a, w) {
+  return a.map((_, i) => {
+    const s = Math.max(0, i - Math.floor(w/2)), e = Math.min(a.length, s + w);
+    return parseFloat((a.slice(s,e).reduce((x,y)=>x+y,0)/(e-s)).toFixed(3));
   });
 }
 
-function rollingAvg(arr, w) {
-  return arr.map((_, i) => {
-    const s = Math.max(0, i - Math.floor(w / 2));
-    const e = Math.min(arr.length, s + w);
-    const sl = arr.slice(s, e);
-    return parseFloat((sl.reduce((a,b) => a+b,0) / sl.length).toFixed(3));
-  });
-}
-
-// ── Sensor chart ──────────────────────────────────────────────
-// Normalized to % deviation from cycle-1 baseline (0 = nominal)
-// Positive slope = increasing (temp / fuel flow); negative = decreasing (pressure)
-const N = 80;
-const cycles = Array.from({length: N}, (_, i) => i + 1);
-
-const sensors = [
-  { label: 'T30 — HPC Outlet Temp',   slope:  0.13, noise: 1.5, color: '#2196F3' },
-  { label: 'T48 — HPT Outlet Temp',   slope:  0.19, noise: 1.9, color: '#00BCD4' },
-  { label: 'Ps30 — HPC Static Pres.', slope: -0.11, noise: 1.3, color: '#FF9800' },
-  { label: 'Wf — Fuel Flow',          slope:  0.09, noise: 1.1, color: '#9C27B0' },
+// Sensor chart
+const N = 80, cx = Array.from({length:N},(_,i)=>i+1);
+const sdefs = [
+  { label:'T30 — HPC Outlet Temp',   slope: .13, noise:1.5, c:'#1655a2' },
+  { label:'T48 — HPT Outlet Temp',   slope: .19, noise:1.9, c:'#0891b2' },
+  { label:'Ps30 — HPC Static Pres.', slope:-.11, noise:1.3, c:'#ea580c' },
+  { label:'Wf — Fuel Flow',          slope: .09, noise:1.1, c:'#7c3aed' },
 ];
-
-const sensorDatasets = [];
-sensors.forEach(s => {
-  _seed = 42;
-  const raw = genSeries(N, 0, s.slope, s.noise);
-  const avg = rollingAvg(raw, 7);
-  sensorDatasets.push(
-    { label: s.label, data: raw, borderColor: s.color + '55', backgroundColor: 'transparent',
-      borderWidth: 1, pointRadius: 0, tension: 0.35 },
-    { label: s.label + ' (avg)', data: avg, borderColor: s.color, backgroundColor: 'transparent',
-      borderWidth: 2.2, pointRadius: 0, tension: 0.4 }
+const sDs = [];
+sdefs.forEach((sd, i) => {
+  _s = 42 + i * 17;
+  const raw = series(N, 0, sd.slope, sd.noise), avg = roll(raw, 7);
+  sDs.push(
+    { label:sd.label, data:raw, borderColor:sd.c+'44', backgroundColor:'transparent', borderWidth:1, pointRadius:0, tension:.3 },
+    { label:sd.label+'~', data:avg, borderColor:sd.c, backgroundColor:'transparent', borderWidth:2, pointRadius:0, tension:.4 }
   );
-  _seed += 31;
 });
-
 new Chart(document.getElementById('sensorChart'), {
-  type: 'line',
-  data: { labels: cycles, datasets: sensorDatasets },
-  options: {
-    responsive: true,
-    interaction: { mode: 'nearest', intersect: false },
-    plugins: {
-      legend: {
-        labels: {
-          filter: item => !item.text.includes('(avg)'),
-          boxWidth: 16, font: { size: 10 },
-        }
-      },
-      tooltip: { enabled: false }
+  type:'line', data:{labels:cx, datasets:sDs},
+  options:{
+    responsive:true, animation:false,
+    plugins:{
+      legend:{ labels:{ filter:i=>!i.text.endsWith('~'), boxWidth:12, font:{size:10} } },
+      tooltip:{enabled:false}
     },
-    scales: {
-      x: {
-        title: { display: true, text: 'Flight Cycle', font: { size: 10 } },
-        grid: { color: 'rgba(100,160,220,0.07)' },
-        ticks: { maxTicksLimit: 10 }
-      },
-      y: {
-        title: { display: true, text: '% deviation from nominal', font: { size: 10 } },
-        grid: { color: 'rgba(100,160,220,0.07)' },
-        ticks: { callback: v => (v >= 0 ? '+' : '') + v.toFixed(0) + '%' }
-      }
+    scales:{
+      x:{ title:{display:true, text:'Flight Cycle', font:{size:10}}, ticks:{maxTicksLimit:8} },
+      y:{ title:{display:true, text:'% from nominal', font:{size:10}}, ticks:{callback:v=>(v>=0?'+':'')+v.toFixed(0)+'%'} }
     }
   }
 });
 
-// ── RUL chart ─────────────────────────────────────────────────
-// Engine IDs and max RUL from N-CMAPSS DS02 dev set (9 engines, 59–89 cycles)
-const engines = [
-  { id: 2,  maxRul: 89 }, { id: 5,  maxRul: 73 }, { id: 10, maxRul: 81 },
-  { id: 11, maxRul: 66 }, { id: 14, maxRul: 85 }, { id: 15, maxRul: 59 },
-  { id: 16, maxRul: 77 }, { id: 18, maxRul: 63 }, { id: 20, maxRul: 71 },
-];
-const palette = [
-  '#2196F3','#00BCD4','#4CAF50','#FF9800','#9C27B0',
-  '#F44336','#00E5FF','#FFEB3B','#76FF03'
-];
-const maxLen = Math.max(...engines.map(e => e.maxRul));
-const rulLabels = Array.from({length: maxLen}, (_, i) => i + 1);
-
-const rulDatasets = engines.map((eng, idx) => {
-  _seed = 100 + idx * 23;
-  const data = rulLabels.map(cyc => {
-    if (cyc > eng.maxRul) return null;
-    const rul = eng.maxRul - cyc;
-    return Math.max(0, parseFloat((rul + (rand() - 0.5) * 1.8).toFixed(1)));
-  });
+// RUL chart
+const engs = [{id:2,r:89},{id:5,r:73},{id:10,r:81},{id:11,r:66},{id:14,r:85},{id:15,r:59},{id:16,r:77},{id:18,r:63},{id:20,r:71}];
+const pal  = ['#1655a2','#0891b2','#0d6e42','#ea580c','#7c3aed','#dc2626','#0369a1','#b45309','#16a34a'];
+const mL   = Math.max(...engs.map(e=>e.r));
+const rLbl = Array.from({length:mL},(_,i)=>i+1);
+const rDs  = engs.map((eng,i) => {
+  _s = 100 + i * 23;
   return {
-    label: `Engine ${eng.id}`,
-    data,
-    borderColor: palette[idx],
-    backgroundColor: 'transparent',
-    borderWidth: 1.8,
-    pointRadius: 0,
-    tension: 0.25,
-    spanGaps: false,
+    label:`Engine ${eng.id}`,
+    data: rLbl.map(c => c > eng.r ? null : Math.max(0, parseFloat((eng.r-c+(rnd()-.5)*1.6).toFixed(1)))),
+    borderColor:pal[i], backgroundColor:'transparent', borderWidth:1.5, pointRadius:0, tension:.2, spanGaps:false
   };
 });
-
 new Chart(document.getElementById('rulChart'), {
-  type: 'line',
-  data: { labels: rulLabels, datasets: rulDatasets },
-  options: {
-    responsive: true,
-    plugins: {
-      legend: { labels: { boxWidth: 14, font: { size: 10 } } },
-      tooltip: {
-        callbacks: {
-          label: ctx => `${ctx.dataset.label}: ${ctx.parsed.y?.toFixed(0) ?? '—'} cycles remaining`
-        }
-      }
+  type:'line', data:{labels:rLbl, datasets:rDs},
+  options:{
+    responsive:true, animation:false,
+    plugins:{
+      legend:{ labels:{ boxWidth:12, font:{size:10} } },
+      tooltip:{ callbacks:{ label:c=>`${c.dataset.label}: ${c.parsed.y?.toFixed(0)??'—'} cycles` } }
     },
-    scales: {
-      x: {
-        title: { display: true, text: 'Flight Cycle', font: { size: 10 } },
-        grid: { color: 'rgba(100,160,220,0.07)' },
-        ticks: { maxTicksLimit: 10 }
-      },
-      y: {
-        title: { display: true, text: 'Remaining Useful Life (cycles)', font: { size: 10 } },
-        grid: { color: 'rgba(100,160,220,0.07)' },
-        min: 0,
-      }
+    scales:{
+      x:{ title:{display:true, text:'Flight Cycle', font:{size:10}}, ticks:{maxTicksLimit:8} },
+      y:{ title:{display:true, text:'RUL (cycles)', font:{size:10}}, min:0 }
     }
   }
 });
