@@ -114,23 +114,9 @@
     .btn-outline:hover { border-color: var(--accent); color: var(--accent); }
 
     /* ── Mission ── */
-    .mission-grid {
-      display: grid; grid-template-columns: 3fr 2fr;
-      gap: 2rem; margin-top: 2.5rem;
-    }
+    .mission-text { margin-top: 2.5rem; max-width: 780px; }
     .mission-text p { color: var(--subtext); line-height: 1.8; font-size: 0.95rem; margin-bottom: 1rem; }
     .mission-text p strong { color: var(--text); }
-    .mission-quote {
-      background: var(--surface);
-      border: 1px solid var(--border); border-left: 3px solid var(--accent);
-      border-radius: 8px; padding: 1.6rem;
-      display: flex; flex-direction: column; justify-content: space-between;
-    }
-    .mission-quote blockquote {
-      font-style: italic; color: var(--subtext);
-      font-size: 0.91rem; line-height: 1.75; margin-bottom: 1.25rem;
-    }
-    .mission-quote cite { font-size: 0.82rem; color: var(--accent); font-style: normal; font-weight: 600; }
 
     /* ── Metrics ── */
     .metrics-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 1.5rem; margin-top: 2.5rem; }
@@ -251,7 +237,7 @@
 
     /* ── Responsive ── */
     @media (max-width: 768px) {
-      .mission-grid, .metrics-grid, .sources-grid, .charts-grid, .about-grid {
+      .metrics-grid, .sources-grid, .charts-grid, .about-grid {
         grid-template-columns: 1fr;
       }
       .pipeline { flex-direction: column; gap: 2rem; align-items: flex-start; padding-left: 1.5rem; }
@@ -301,40 +287,26 @@
 <div class="section-wrap" id="mission">
   <div class="section-label">Mission</div>
   <h2 class="section-title">Reducing Unplanned Aircraft Groundings Nationwide</h2>
-  <div class="mission-grid">
-    <div class="mission-text">
-      <p>
-        Unplanned aircraft groundings have reached record levels across the United States.
-        A core driver is that <strong>predictive engine maintenance has historically required
-        costly enterprise systems</strong> — placing it out of reach for the small regional carriers
-        that are critical to the U.S. aviation network.
-      </p>
-      <p>
-        This study synthesizes <strong>NASA engine performance data</strong>,
-        <strong>FAA Service Difficulty Reports</strong>, and
-        <strong>Bureau of Transportation Statistics records</strong> to model the
-        Remaining Useful Life (RUL) of aircraft engines. Predictions are validated against real
-        U.S. flight network data to quantify their operational impact.
-      </p>
-      <p>
-        Because this framework is <strong>open-source and publicly available</strong>, it is
-        nationally scalable — not proprietary to any single organization — ensuring that
-        data-driven predictive maintenance capabilities are accessible across the entire
-        U.S. aviation system.
-      </p>
-    </div>
-    <div class="mission-quote">
-      <blockquote>
-        "An open-source predictive maintenance framework of this kind would represent a meaningful
-        and long-overdue improvement to U.S. aviation infrastructure. Mr. Joshi's framework advances
-        his proposed endeavor by reducing unplanned aircraft groundings and providing a freely
-        available open-source tool for small regional carriers."
-      </blockquote>
-      <cite>
-        Alain Berube, Senior Advisor — AerConsul LLC<br>
-        Former CEO, MTU Aero Engines North America
-      </cite>
-    </div>
+  <div class="mission-text">
+    <p>
+      Unplanned aircraft groundings have reached record levels across the United States.
+      A core driver is that <strong>predictive engine maintenance has historically required
+      costly enterprise systems</strong> — placing it out of reach for the small regional carriers
+      that are critical to the U.S. aviation network.
+    </p>
+    <p>
+      This study synthesizes <strong>NASA engine performance data</strong>,
+      <strong>FAA Service Difficulty Reports</strong>, and
+      <strong>Bureau of Transportation Statistics records</strong> to model the
+      Remaining Useful Life (RUL) of aircraft engines. Predictions are validated against real
+      U.S. flight network data to quantify their operational impact.
+    </p>
+    <p>
+      Because this framework is <strong>open-source and publicly available</strong>, it is
+      nationally scalable — not proprietary to any single organization — ensuring that
+      data-driven predictive maintenance capabilities are accessible across the entire
+      U.S. aviation system.
+    </p>
   </div>
 </div>
 
@@ -496,12 +468,6 @@
         <strong>Arnav Prashant Joshi</strong>, a researcher specializing in data synthesis and
         optimization for complex operational systems. The predictive maintenance framework is being
         developed as a fully open-source contribution to U.S. aviation infrastructure.
-      </p>
-      <p>
-        The work is advised by <strong>Alain Berube</strong> of AerConsul LLC — who brings over
-        30 years of aerospace and defense leadership, including service as CEO of MTU Aero Engines
-        North America and senior executive roles at four additional international engine maintenance
-        organizations.
       </p>
       <p>
         All code, data pipelines, and model artifacts will be publicly released upon project
