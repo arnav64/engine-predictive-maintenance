@@ -59,24 +59,35 @@ def load_bts_summary() -> pd.DataFrame | None:
 
 
 def load_sdr_engine_fraction() -> float:
-    """Compute engine event fraction from SDR data if available."""
-    sdr_path = PROC_DIR / "faa_sdr_engine_clean.parquet"
-    if not sdr_path.exists():
-        print(f"SDR data not found — using literature baseline ({ENGINE_FRACTION_DEFAULT:.0%})")
-        return ENGINE_FRACTION_DEFAULT
+    """
+    Engine fraction of carrier-caused cancellations.
 
-    sdr = pd.read_parquet(sdr_path)
-    # Unplanned = events without a prior same-unit report within 60 days
-    # (proxy: first occurrence per aircraft_model per year is unplanned)
-    if "date" in sdr.columns and "aircraft_model" in sdr.columns:
-        sdr = sdr.sort_values("date")
-        sdr["year"] = sdr["date"].dt.year
-        sdr["prev_event"] = sdr.groupby(["aircraft_model", "year"])["date"].shift(1)
-        sdr["days_since_last"] = (sdr["date"] - sdr["prev_event"]).dt.days
-        unplanned_frac = (sdr["days_since_last"].isna() |
-                          (sdr["days_since_last"] > 60)).mean()
-        print(f"SDR-derived unplanned fraction: {unplanned_frac:.1%}")
-        return float(unplanned_frac) * ENGINE_FRACTION_DEFAULT
+    Uses the literature baseline directly (BTS Air Carrier cause category /
+    NAS delay-attribution studies) rather than further discounting it by an
+    SDR-derived "unplanned fraction." An earlier version of this pipeline
+    multiplied by such a fraction, but that number was a recurrence-timing
+    proxy with no ground-truth label behind it (our SDR pull has no
+    problem-description or discovery-method field), and the 18% baseline
+    already represents mechanical/engine cancellations specifically — which
+    are effectively unplanned by construction (planned maintenance findings
+    get an aircraft swap, not a cancellation). Multiplying by an extra
+    "unplanned" factor was double-discounting the same thing twice.
+
+    The FAA SDR pull (1,533 cleaned engine events, 2020-2024) is still used
+    as real-world validation that engine failures are a substantial,
+    persistent share of maintenance events — see results/sdr_annual_trend.csv
+    and results/sdr_events_by_aircraft.csv — just not as a further multiplier
+    here, since it can't support one.
+    """
+    sdr_path = PROC_DIR / "faa_sdr_engine_clean.parquet"
+    if sdr_path.exists():
+        sdr = pd.read_parquet(sdr_path)
+        print(f"SDR validation: {len(sdr):,} engine events 2020-2024 "
+              f"(see results/sdr_annual_trend.csv)")
+    else:
+        print("SDR data not found — proceeding on literature baseline alone")
+
+    print(f"Engine fraction: {ENGINE_FRACTION_DEFAULT:.0%} (literature baseline, unadjusted)")
     return ENGINE_FRACTION_DEFAULT
 
 

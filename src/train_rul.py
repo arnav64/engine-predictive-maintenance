@@ -40,7 +40,11 @@ XGB_PARAMS = dict(
     verbosity=0,
 )
 
-NON_FEATURE_COLS = {"unit", "cycle", "RUL", "split", "Fc", "hs"}
+# "cycle" (elapsed flight cycles) and "Fc" (flight class) are both known in
+# advance during real operation, so they're legitimate features, not leaks.
+# "hs" (health state) directly encodes the degradation label itself and
+# stays excluded.
+NON_FEATURE_COLS = {"unit", "RUL", "split", "hs"}
 
 
 def nasa_score(actual: np.ndarray, predicted: np.ndarray) -> float:

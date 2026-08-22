@@ -92,6 +92,36 @@ def build_cycle_features(W, X_s, X_v, Y, A) -> pd.DataFrame:
     return cyc
 
 
+def add_temporal_features(cyc: pd.DataFrame, window: int = 5) -> pd.DataFrame:
+    """
+    Add per-unit trend features on top of the per-cycle mean/std snapshot.
+
+    The base features treat every cycle independently, which discards the
+    thing RUL prediction is actually about: how sensors drift over a unit's
+    own trajectory. This adds, for every "_mean" sensor column:
+      - a trailing rolling mean (short-horizon trend)
+      - delta vs. `window` cycles ago (short-horizon rate of change)
+      - drift vs. this unit's first recorded cycle (long-horizon degradation)
+    All of these only look backward within a unit's own history, so they
+    don't leak future information.
+    """
+    cyc = cyc.sort_values(["unit", "cycle"]).reset_index(drop=True)
+    sensor_mean_cols = [c for c in cyc.columns if c.endswith("_mean")]
+    grouped = cyc.groupby("unit")[sensor_mean_cols]
+
+    roll = grouped.rolling(window=window, min_periods=1).mean()
+    roll.index = roll.index.droplevel(0)
+    roll = roll.add_suffix(f"_roll{window}")
+
+    lagged = grouped.shift(window)
+    delta = (cyc[sensor_mean_cols] - lagged).fillna(0.0).add_suffix(f"_delta{window}")
+
+    first_vals = grouped.transform("first")
+    drift = (cyc[sensor_mean_cols] - first_vals).add_suffix("_drift")
+
+    return pd.concat([cyc, roll, delta, drift], axis=1)
+
+
 def process_dataset(path: Path, ds_name: str) -> pd.DataFrame:
     print(f"\nProcessing {ds_name} ...")
     frames = []
@@ -108,6 +138,8 @@ def process_dataset(path: Path, ds_name: str) -> pd.DataFrame:
     # Drop std columns that are all-NaN (single-timestep cycles)
     std_cols = [c for c in combined.columns if c.endswith("_std")]
     combined[std_cols] = combined[std_cols].fillna(0.0)
+
+    combined = add_temporal_features(combined)
 
     out = PROC_DIR / f"features_{ds_name}.parquet"
     combined.to_parquet(out, index=False)

@@ -1,0 +1,51 @@
+engine_fraction,engine_fraction_note,warning_cycles,detection_rate,system_wide_reduction_pct
+0.1,conservative low end,10,0.3,3.0
+0.1,conservative low end,15,0.3624982171964376,3.624982171964376
+0.1,conservative low end,20,0.5218736628973282,5.218736628973282
+0.1,conservative low end,25,0.6174989303178626,6.174989303178627
+0.1,conservative low end,30,0.6812491085982189,6.812491085982189
+0.1,conservative low end,40,0.7609368314486641,7.609368314486642
+0.1,conservative low end,50,0.8087494651589313,8.087494651589314
+0.1,conservative low end,60,0.8406245542991094,8.406245542991094
+0.1,conservative low end,75,0.8724996434392875,8.724996434392876
+0.1,conservative low end,90,0.8937497028660729,8.93749702866073
+0.18,literature baseline used in impact_analysis.py (BTS NAS delay-cause studies),10,0.3,5.4
+0.18,literature baseline used in impact_analysis.py (BTS NAS delay-cause studies),15,0.3624982171964376,6.524967909535877
+0.18,literature baseline used in impact_analysis.py (BTS NAS delay-cause studies),20,0.5218736628973282,9.393725932151908
+0.18,literature baseline used in impact_analysis.py (BTS NAS delay-cause studies),25,0.6174989303178626,11.114980745721526
+0.18,literature baseline used in impact_analysis.py (BTS NAS delay-cause studies),30,0.6812491085982189,12.262483954767939
+0.18,literature baseline used in impact_analysis.py (BTS NAS delay-cause studies),40,0.7609368314486641,13.696862966075955
+0.18,literature baseline used in impact_analysis.py (BTS NAS delay-cause studies),50,0.8087494651589313,14.557490372860762
+0.18,literature baseline used in impact_analysis.py (BTS NAS delay-cause studies),60,0.8406245542991094,15.131241977383969
+0.18,literature baseline used in impact_analysis.py (BTS NAS delay-cause studies),75,0.8724996434392875,15.704993581907175
+0.18,literature baseline used in impact_analysis.py (BTS NAS delay-cause studies),90,0.8937497028660729,16.087494651589314
+0.22,midpoint stretch,10,0.3,6.6000000000000005
+0.22,midpoint stretch,15,0.3624982171964376,7.974960778321627
+0.22,midpoint stretch,20,0.5218736628973282,11.48122058374122
+0.22,midpoint stretch,25,0.6174989303178626,13.584976466992979
+0.22,midpoint stretch,30,0.6812491085982189,14.987480389160815
+0.22,midpoint stretch,40,0.7609368314486641,16.74061029187061
+0.22,midpoint stretch,50,0.8087494651589313,17.79248823349649
+0.22,midpoint stretch,60,0.8406245542991094,18.493740194580408
+0.22,midpoint stretch,75,0.8724996434392875,19.194992155664327
+0.22,midpoint stretch,90,0.8937497028660729,19.662493463053604
+0.267,"SkyRefund 2025 'technical issues' share of disruption claims (different denominator: all disruptions, not carrier-caused cancels only)",10,0.3,8.01
+0.267,"SkyRefund 2025 'technical issues' share of disruption claims (different denominator: all disruptions, not carrier-caused cancels only)",15,0.3624982171964376,9.678702399144884
+0.267,"SkyRefund 2025 'technical issues' share of disruption claims (different denominator: all disruptions, not carrier-caused cancels only)",20,0.5218736628973282,13.934026799358662
+0.267,"SkyRefund 2025 'technical issues' share of disruption claims (different denominator: all disruptions, not carrier-caused cancels only)",25,0.6174989303178626,16.48722143948693
+0.267,"SkyRefund 2025 'technical issues' share of disruption claims (different denominator: all disruptions, not carrier-caused cancels only)",30,0.6812491085982189,18.189351199572446
+0.267,"SkyRefund 2025 'technical issues' share of disruption claims (different denominator: all disruptions, not carrier-caused cancels only)",40,0.7609368314486641,20.317013399679333
+0.267,"SkyRefund 2025 'technical issues' share of disruption claims (different denominator: all disruptions, not carrier-caused cancels only)",50,0.8087494651589313,21.593610719743467
+0.267,"SkyRefund 2025 'technical issues' share of disruption claims (different denominator: all disruptions, not carrier-caused cancels only)",60,0.8406245542991094,22.444675599786223
+0.267,"SkyRefund 2025 'technical issues' share of disruption claims (different denominator: all disruptions, not carrier-caused cancels only)",75,0.8724996434392875,23.29574047982898
+0.267,"SkyRefund 2025 'technical issues' share of disruption claims (different denominator: all disruptions, not carrier-caused cancels only)",90,0.8937497028660729,23.863117066524147
+0.3,upper stretch bound,10,0.3,9.0
+0.3,upper stretch bound,15,0.3624982171964376,10.874946515893127
+0.3,upper stretch bound,20,0.5218736628973282,15.656209886919845
+0.3,upper stretch bound,25,0.6174989303178626,18.524967909535878
+0.3,upper stretch bound,30,0.6812491085982189,20.437473257946564
+0.3,upper stretch bound,40,0.7609368314486641,22.82810494345992
+0.3,upper stretch bound,50,0.8087494651589313,24.262483954767937
+0.3,upper stretch bound,60,0.8406245542991094,25.218736628973282
+0.3,upper stretch bound,75,0.8724996434392875,26.174989303178624
+0.3,upper stretch bound,90,0.8937497028660729,26.812491085982188
