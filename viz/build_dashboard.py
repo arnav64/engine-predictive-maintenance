@@ -57,13 +57,13 @@ def fig_rul_scatter() -> go.Figure:
     for i, unit in enumerate(sorted(df["unit"].unique())):
         sub = df[df["unit"] == unit]
         traces.append(go.Scatter(
-            x=sub["RUL"], y=sub["predicted_RUL"], mode="markers",
+            x=sub["RUL"].tolist(), y=sub["predicted_RUL"].tolist(), mode="markers",
             name=f"Engine {int(unit)}",
             marker=dict(size=6, color=CATEGORICAL[i % len(CATEGORICAL)], opacity=0.65),
             hovertemplate="Actual RUL: %{x}<br>Predicted: %{y:.1f}<extra>Engine "
                           + str(int(unit)) + "</extra>",
         ))
-    lims = [0, max(df["RUL"].max(), df["predicted_RUL"].max()) + 5]
+    lims = [0, float(max(df["RUL"].max(), df["predicted_RUL"].max())) + 5]
     traces.append(go.Scatter(x=lims, y=lims, mode="lines",
                               line=dict(color=INK3, dash="dash", width=1.5),
                               hoverinfo="skip", showlegend=False))
@@ -81,7 +81,7 @@ def fig_rul_trajectories() -> go.Figure:
     for i, unit in enumerate(sorted(df["unit"].unique())):
         sub = df[df["unit"] == unit]
         traces.append(go.Scatter(
-            x=sub["cycle"], y=sub["RUL"], mode="lines", name=f"Engine {int(unit)}",
+            x=sub["cycle"].tolist(), y=sub["RUL"].tolist(), mode="lines", name=f"Engine {int(unit)}",
             line=dict(color=CATEGORICAL[i % len(CATEGORICAL)], width=2),
             hovertemplate="Cycle %{x}<br>RUL: %{y}<extra>Engine " + str(int(unit)) + "</extra>",
         ))
@@ -96,8 +96,8 @@ def fig_sdr_aircraft() -> go.Figure:
     df = pd.read_csv(RESULTS_DIR / "sdr_events_by_aircraft.csv").head(15)
     df = df.sort_values("events")
     fig = go.Figure(go.Bar(
-        x=df["events"], y=df["aircraft_model"], orientation="h",
-        marker=dict(color=df["events"], colorscale=[[0, "#bfdbfe"], [1, BLUE_DK]]),
+        x=df["events"].tolist(), y=df["aircraft_model"].tolist(), orientation="h",
+        marker=dict(color=df["events"].tolist(), colorscale=[[0, "#bfdbfe"], [1, BLUE_DK]]),
         hovertemplate="%{y}: %{x} SDR events<extra></extra>",
     ))
     fig.update_layout(**BASE_LAYOUT,
@@ -110,7 +110,7 @@ def fig_sdr_aircraft() -> go.Figure:
 def fig_sdr_trend() -> go.Figure:
     df = pd.read_csv(RESULTS_DIR / "sdr_annual_trend.csv")
     fig = go.Figure(go.Scatter(
-        x=df["year"], y=df["events"], mode="lines+markers",
+        x=df["year"].tolist(), y=df["events"].tolist(), mode="lines+markers",
         line=dict(color=BLUE, width=3), marker=dict(size=9, color=BLUE),
         fill="tozeroy", fillcolor="rgba(37,99,235,0.08)",
         hovertemplate="%{x}: %{y} events<extra></extra>",
@@ -126,12 +126,12 @@ def fig_carrier_impact() -> go.Figure:
     df = df.sort_values("avoided_cancels")
     fig = go.Figure()
     fig.add_trace(go.Bar(
-        x=df["carrier_cancels"], y=df["carrier_name"], orientation="h",
+        x=df["carrier_cancels"].tolist(), y=df["carrier_name"].tolist(), orientation="h",
         name="Total carrier cancels", marker=dict(color="#fecaca"),
         hovertemplate="%{y}: %{x:,.0f} total cancels<extra></extra>",
     ))
     fig.add_trace(go.Bar(
-        x=df["avoided_cancels"], y=df["carrier_name"], orientation="h",
+        x=df["avoided_cancels"].tolist(), y=df["carrier_name"].tolist(), orientation="h",
         name="Avoidable with RUL model", marker=dict(color=BLUE),
         hovertemplate="%{y}: %{x:,.0f} avoidable<extra></extra>",
     ))
@@ -147,7 +147,7 @@ def fig_sensitivity() -> go.Figure:
     df = pd.read_csv(RESULTS_DIR / "sensitivity_grid.csv")
     pivot = df.pivot(index="engine_fraction", columns="warning_cycles",
                       values="system_wide_reduction_pct")
-    z = pivot.values
+    z = pivot.values.tolist()
     fig = go.Figure(go.Heatmap(
         z=z, x=[str(c) for c in pivot.columns], y=[f"{v:.0%}" for v in pivot.index],
         colorscale=[[0, "#f0fdf4"], [0.5, "#93c5fd"], [1, BLUE_DK]],
