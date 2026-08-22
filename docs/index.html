@@ -171,6 +171,18 @@
       background: var(--amb-lt); border: 1px solid rgba(180,83,9,.2);
       color: var(--amber); padding: 0.2rem 0.6rem; border-radius: 4px;
     }
+    .real-tag {
+      font-size: 0.72rem; font-weight: 600; letter-spacing: 0.05em; text-transform: uppercase;
+      background: var(--grn-lt); border: 1px solid rgba(21,128,61,.2);
+      color: var(--green); padding: 0.2rem 0.6rem; border-radius: 4px;
+    }
+    .result-callout {
+      background: var(--blue-lt); border: 1px solid var(--blue-br);
+      border-radius: 12px; padding: 1.5rem 1.75rem; margin-bottom: 2.5rem;
+      display: flex; align-items: baseline; gap: 1rem; flex-wrap: wrap;
+    }
+    .result-callout .num { font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: 2rem; color: var(--blue); }
+    .result-callout .desc { font-size: 0.9rem; color: var(--ink2); line-height: 1.6; max-width: 520px; }
     .chart-sub { font-size: 0.875rem; color: var(--ink3); line-height: 1.55; margin-bottom: 1.25rem; }
     canvas { max-height: 240px; }
 
@@ -275,13 +287,13 @@
         <span class="card-icon">✈️</span>
         <div class="card-name">FAA Service Difficulty Reports</div>
         <div class="card-tag">Maintenance Events</div>
-        <div class="card-desc">U.S. operator-reported mechanical problems and unscheduled maintenance — used to validate predictions against real-world failure patterns.</div>
+        <div class="card-desc">1,533 real engine SDR events (JASC 7200, 2020–2024), manually pulled from sdrs.faa.gov — used to validate that engine failures are a substantial, persistent share of U.S. carrier maintenance events.</div>
       </div>
       <div class="card">
         <span class="card-icon">📊</span>
         <div class="card-name">Bureau of Transportation Statistics</div>
         <div class="card-tag">Flight Operations</div>
-        <div class="card-desc">U.S. flight schedules, delays, and cancellations — used to quantify the operational and financial impact of unplanned groundings.</div>
+        <div class="card-desc">21,073 annual carrier-caused cancellations across 14 U.S. carriers — used as the baseline against which avoidable, engine-related groundings are estimated.</div>
       </div>
     </div>
   </div>
@@ -297,26 +309,26 @@
       <div class="pipe-step">
         <div class="pipe-num done">1</div>
         <div class="pipe-title">Data Ingestion</div>
-        <div class="pipe-desc">Download &amp; validate NASA HDF5 archives; parse FAA SDR and BTS flight records.</div>
+        <div class="pipe-desc">NASA HDF5 archives downloaded &amp; validated; 5 years of FAA SDR engine records and BTS 2025 carrier cancellations parsed.</div>
         <span class="pipe-badge done">Complete</span>
       </div>
       <div class="pipe-step">
-        <div class="pipe-num active">2</div>
+        <div class="pipe-num done">2</div>
         <div class="pipe-title">Feature Engineering</div>
-        <div class="pipe-desc">Rolling degradation rates, flight-normalized baselines, and cycle-level health indices.</div>
-        <span class="pipe-badge active">In Progress</span>
+        <div class="pipe-desc">Per-cycle sensor aggregates plus per-unit trend signal — rolling means, short-horizon deltas, and drift from each engine's first recorded cycle.</div>
+        <span class="pipe-badge done">Complete</span>
       </div>
       <div class="pipe-step">
-        <div class="pipe-num todo">3</div>
+        <div class="pipe-num done">3</div>
         <div class="pipe-title">RUL Prediction</div>
-        <div class="pipe-desc">Gradient-boosted &amp; time-series models, cross-validated across flight classes.</div>
-        <span class="pipe-badge todo">Planned</span>
+        <div class="pipe-desc">XGBoost regressor, leave-one-unit-out cross-validated. 9.56-cycle mean CV RMSE (DS02), 7.78 (DS01).</div>
+        <span class="pipe-badge done">Complete</span>
       </div>
       <div class="pipe-step">
-        <div class="pipe-num todo">4</div>
+        <div class="pipe-num done">4</div>
         <div class="pipe-title">Operational Validation</div>
-        <div class="pipe-desc">Map predictions to BTS schedules; quantify ground-time and cost savings.</div>
-        <span class="pipe-badge todo">Planned</span>
+        <div class="pipe-desc">RUL detection rate × engine fraction × BTS baseline, cross-checked with a sensitivity analysis across the underlying assumptions.</div>
+        <span class="pipe-badge done">Complete</span>
       </div>
     </div>
   </div>
@@ -325,24 +337,28 @@
 <!-- ── Results ── -->
 <div class="sec sec-white" id="results">
   <div class="sec-inner">
-    <div class="sec-label">Preliminary Results</div>
-    <div class="sec-title">Exploratory Analysis: N-CMAPSS DS02</div>
-    <p class="sec-desc">Initial analysis reveals consistent, learnable degradation signatures across all 9 engines in the dataset.</p>
+    <div class="sec-label">Results</div>
+    <div class="sec-title">Completed Analysis: RUL Model + Real-World Validation</div>
+    <p class="sec-desc">The full pipeline — NASA sensor data, FAA maintenance records, and BTS operational baselines — is integrated end to end. Charts below use real pipeline output, not simulated data.</p>
+    <div class="result-callout">
+      <span class="num">12.3%</span>
+      <span class="desc"><strong>System-wide reduction in carrier cancellations</strong> projected from RUL-guided predictive maintenance — 2,586 of 21,073 annual carrier-caused cancellations, from a 68.1% RUL detection rate and an 18% literature-sourced engine-fraction baseline. See the repo's <code>results/sensitivity_grid.csv</code> for how this moves across underlying assumptions.</span>
+    </div>
     <div class="chart-row">
       <div class="chart-card">
         <div class="chart-head">
           <span class="chart-name">Sensor Degradation Trends</span>
-          <span class="illus-tag">Illustrative</span>
+          <span class="real-tag">Real Data</span>
         </div>
-        <div class="chart-sub">4 physical sensors over ~80 flight cycles · bold = 7-cycle rolling average</div>
+        <div class="chart-sub">4 physical sensors, Engine 5 (DS02, 89-cycle full life) · bold = 7-cycle rolling average</div>
         <canvas id="sensorChart"></canvas>
       </div>
       <div class="chart-card">
         <div class="chart-head">
           <span class="chart-name">Remaining Useful Life Countdown</span>
-          <span class="illus-tag">Illustrative</span>
+          <span class="real-tag">Real Data</span>
         </div>
-        <div class="chart-sub">9 engines from N-CMAPSS DS02 development set · cycles remaining to failure</div>
+        <div class="chart-sub">All 9 engines, N-CMAPSS DS02 (dev + test) · ground-truth cycles remaining to failure</div>
         <canvas id="rulChart"></canvas>
       </div>
     </div>
@@ -373,10 +389,10 @@
         <div class="status-title">Project Status</div>
         <div class="status-row"><div class="sdot sdot-g"></div>Data download &amp; validation pipeline</div>
         <div class="status-row"><div class="sdot sdot-g"></div>Exploratory sensor analysis (DS02)</div>
-        <div class="status-row"><div class="sdot sdot-b"></div>Feature engineering &amp; health indexing</div>
-        <div class="status-row"><div class="sdot sdot-x"></div>RUL model training &amp; validation</div>
-        <div class="status-row"><div class="sdot sdot-x"></div>Operational impact analysis (BTS)</div>
-        <div class="status-row"><div class="sdot sdot-x"></div>Public framework release</div>
+        <div class="status-row"><div class="sdot sdot-g"></div>Feature engineering &amp; health indexing</div>
+        <div class="status-row"><div class="sdot sdot-g"></div>RUL model training &amp; validation</div>
+        <div class="status-row"><div class="sdot sdot-g"></div>Operational impact analysis (BTS)</div>
+        <div class="status-row"><div class="sdot sdot-g"></div>Public framework release</div>
       </div>
     </div>
   </div>
@@ -394,37 +410,22 @@ Chart.defaults.borderColor = 'rgba(0,0,0,0.06)';
 Chart.defaults.font.family = "'Inter', system-ui, sans-serif";
 Chart.defaults.font.size   = 11;
 
-let _s = 42;
-function rnd() { _s = (_s * 1664525 + 1013904223) >>> 0; return _s / 4294967296; }
-function series(n, start, slope, noise) {
-  return Array.from({length: n}, (_, i) => parseFloat((start + slope * i + (rnd() - .5) * noise).toFixed(3)));
-}
-function roll(a, w) {
-  return a.map((_, i) => {
-    const s = Math.max(0, i - Math.floor(w/2)), e = Math.min(a.length, s + w);
-    return parseFloat((a.slice(s,e).reduce((x,y)=>x+y,0)/(e-s)).toFixed(3));
-  });
-}
+// Real pipeline output, exported from data/processed/features_DS02.parquet
+// (src/feature_engineering.py). Not simulated.
+const REAL_DATA = {"sensor_unit":5,"sensor_cycles":[1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55,56,57,58,59,60,61,62,63,64,65,66,67,68,69,70,71,72,73,74,75,76,77,78,79,80,81,82,83,84,85,86,87,88,89],"sensors":{"T30":{"label":"T30 — HPC Outlet Temp","raw":[0.0,-1.058,1.003,0.341,-0.243,-0.171,-0.202,0.512,0.697,0.074,-0.772,-1.454,-0.904,-0.482,0.473,0.114,-1.734,0.477,0.471,0.48,0.693,0.751,-0.265,0.617,-0.611,0.37,1.268,0.694,-1.043,0.825,1.708,0.823,-0.185,1.14,-1.047,-0.188,-0.292,0.247,-0.184,-0.469,-1.747,-0.407,-0.795,1.185,-1.752,2.455,0.438,-0.788,-0.86,-0.498,1.119,0.148,-0.264,0.664,-0.292,-0.48,0.656,-0.568,-1.443,0.227,0.455,-0.882,0.144,1.254,-0.252,-0.762,0.623,-0.207,0.381,0.417,0.081,0.081,-0.307,0.702,1.357,-1.6,0.042,-1.87,1.491,-0.055,0.298,1.3,0.897,1.519,0.743,-1.739,-0.762,-2.171,-1.819],"roll":[0.071,0.009,-0.021,-0.047,0.026,0.277,0.144,-0.015,-0.188,-0.293,-0.333,-0.338,-0.422,-0.68,-0.501,-0.226,-0.029,0.139,0.179,0.125,0.461,0.305,0.291,0.403,0.403,0.147,0.303,0.459,0.664,0.584,0.566,0.317,0.439,0.28,0.071,-0.073,-0.113,-0.526,-0.434,-0.521,-0.31,-0.596,-0.219,-0.089,0.048,-0.017,0.026,0.016,0.288,-0.101,-0.068,0.002,0.057,0.222,-0.019,-0.247,-0.177,-0.206,-0.291,-0.202,-0.116,-0.071,0.026,0.083,-0.012,0.169,0.208,0.04,0.088,0.153,0.164,0.387,0.104,0.051,-0.228,-0.026,0.01,-0.048,-0.056,0.3,0.511,0.885,0.423,0.322,-0.03,-0.476,-0.705,-1.15,-1.623]},"T48":{"label":"T48 — HPT Outlet Temp","raw":[0.0,-1.202,-0.257,-0.422,-0.007,-1.157,-1.246,-0.233,0.789,0.357,-1.939,-1.173,-0.749,-0.024,0.512,0.415,-2.122,0.746,0.238,0.725,0.823,0.69,-0.286,0.755,-1.013,0.356,1.142,0.813,-1.4,0.999,0.728,1.013,-0.429,-0.033,-1.372,-0.401,-0.018,0.034,-1.062,-0.615,-2.033,-0.455,-1.767,0.56,-1.992,2.14,0.753,-1.433,-1.098,-0.849,0.143,-0.263,0.163,0.99,0.345,-0.217,0.034,-0.163,-2.556,0.241,0.213,-0.454,0.821,1.375,0.095,0.186,0.317,0.378,0.943,0.53,0.251,0.737,0.212,1.922,1.696,-0.127,1.447,-0.989,2.492,1.388,1.904,2.204,2.177,2.318,3.536,-0.256,1.464,-0.343,0.564],"roll":[-0.47,-0.378,-0.507,-0.613,-0.646,-0.362,-0.274,-0.491,-0.657,-0.599,-0.425,-0.318,-0.372,-0.726,-0.342,-0.141,0.07,0.191,0.216,0.116,0.527,0.276,0.293,0.352,0.351,0.052,0.236,0.232,0.522,0.409,0.242,-0.071,0.072,-0.073,-0.172,-0.469,-0.495,-0.781,-0.65,-0.845,-0.763,-1.052,-0.595,-0.399,-0.313,-0.405,-0.274,-0.334,-0.087,-0.369,-0.335,-0.081,0.045,0.171,0.127,-0.201,-0.189,-0.3,-0.415,-0.266,-0.075,-0.038,0.354,0.365,0.388,0.588,0.546,0.386,0.477,0.481,0.71,0.899,0.746,0.877,0.7,0.95,1.118,1.116,1.188,1.518,1.642,2.288,1.896,1.907,1.586,1.351,1.214,0.993,0.357]},"Ps30":{"label":"Ps30 — HPC Static Pres.","raw":[0.0,-5.183,15.602,7.272,-2.35,4.352,6.506,9.039,3.998,-1.584,2.726,-10.237,-3.682,-5.089,2.446,-1.932,-7.351,0.414,5.516,0.422,3.985,5.542,-3.229,2.658,-1.568,2.356,10.308,3.988,-5.87,5.077,19.034,5.072,1.282,15.868,-5.88,1.271,-1.746,4.696,4.315,1.08,-7.384,-1.59,2.661,15.303,-7.398,21.271,2.856,3.061,-2.698,1.809,15.796,6.839,-3.04,6.05,-2.479,-1.503,11.922,-2.232,3.213,5.05,8.862,-2.907,1.905,11.97,1.085,-6.462,11.807,0.63,5.238,8.736,6.638,4.854,1.765,4.721,15.908,-10.593,1.069,-6.068,14.556,2.458,1.921,15.692,9.239,18.361,-0.442,-6.391,-2.821,-6.502,-7.691],"roll":[4.423,3.068,3.282,3.743,5.034,6.346,3.89,3.241,2.114,0.967,-0.69,-1.632,-2.479,-3.303,-3.633,-1.383,-0.796,0.5,0.942,0.757,2.187,1.904,1.452,2.865,2.865,1.235,2.421,4.761,5.709,5.556,6.35,4.94,5.961,4.986,2.938,2.829,2.801,-0.521,0.092,0.29,2.726,0.998,3.42,3.674,5.166,5.008,4.886,4.957,6.991,3.518,3.974,3.182,3.353,4.798,2.222,1.704,2.86,3.262,3.201,3.688,3.694,4.168,2.786,3.751,2.575,3.739,4.715,3.953,4.492,5.667,4.655,6.837,4.576,3.48,1.665,3.051,3.15,2.75,2.719,5.552,8.023,8.826,5.834,5.08,3.877,0.536,-0.914,-4.769,-5.851]},"Wf":{"label":"Wf — Fuel Flow","raw":[0.0,-5.996,13.558,6.41,-1.926,2.374,4.465,8.189,4.642,-1.011,0.327,-10.856,-3.527,-4.78,2.518,-1.421,-8.931,1.209,5.636,1.191,4.671,5.901,-3.654,2.935,-2.659,2.397,10.887,4.663,-7.398,5.746,17.822,5.758,0.771,14.866,-7.376,0.795,-1.45,5.0,2.459,0.798,-8.862,-2.124,0.479,15.156,-8.829,22.464,3.517,1.502,-3.925,0.899,15.041,6.094,-2.901,7.233,-1.637,-1.748,10.945,-2.268,0.186,4.899,8.604,-2.64,2.814,12.661,1.221,-5.794,11.216,0.964,6.263,8.898,6.561,5.595,1.758,6.559,17.376,-10.069,2.794,-6.121,16.676,5.023,3.714,17.871,11.207,19.425,3.38,-6.159,-0.934,-5.763,-5.885],"roll":[3.493,2.409,2.403,2.698,3.868,5.387,3.306,2.437,1.161,0.318,-1.002,-1.812,-2.679,-3.81,-3.684,-1.328,-0.654,0.696,1.179,0.86,2.556,2.003,1.54,2.925,2.924,1.024,2.367,4.494,5.696,5.464,6.033,4.313,5.483,4.455,2.623,2.152,2.156,-1.234,-0.483,-0.529,1.844,-0.132,2.726,3.114,4.595,4.338,4.398,4.381,6.513,2.89,3.42,2.972,3.283,4.718,2.245,1.401,2.516,2.712,2.568,3.22,3.465,3.964,3.109,4.012,2.92,4.192,5.061,4.19,4.815,5.894,5.228,7.573,5.24,4.368,2.556,4.139,4.605,4.199,4.27,7.309,9.685,11.042,7.78,6.929,5.575,2.182,0.677,-3.072,-4.685]}},"rul_units":[{"unit":2,"cycles":[1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55,56,57,58,59,60,61,62,63,64,65,66,67,68,69,70,71,72,73,74,75],"rul":[74,73,72,71,70,69,68,67,66,65,64,63,62,61,60,59,58,57,56,55,54,53,52,51,50,49,48,47,46,45,44,43,42,41,40,39,38,37,36,35,34,33,32,31,30,29,28,27,26,25,24,23,22,21,20,19,18,17,16,15,14,13,12,11,10,9,8,7,6,5,4,3,2,1,0]},{"unit":5,"cycles":[1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55,56,57,58,59,60,61,62,63,64,65,66,67,68,69,70,71,72,73,74,75,76,77,78,79,80,81,82,83,84,85,86,87,88,89],"rul":[88,87,86,85,84,83,82,81,80,79,78,77,76,75,74,73,72,71,70,69,68,67,66,65,64,63,62,61,60,59,58,57,56,55,54,53,52,51,50,49,48,47,46,45,44,43,42,41,40,39,38,37,36,35,34,33,32,31,30,29,28,27,26,25,24,23,22,21,20,19,18,17,16,15,14,13,12,11,10,9,8,7,6,5,4,3,2,1,0]},{"unit":10,"cycles":[1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55,56,57,58,59,60,61,62,63,64,65,66,67,68,69,70,71,72,73,74,75,76,77,78,79,80,81,82],"rul":[81,80,79,78,77,76,75,74,73,72,71,70,69,68,67,66,65,64,63,62,61,60,59,58,57,56,55,54,53,52,51,50,49,48,47,46,45,44,43,42,41,40,39,38,37,36,35,34,33,32,31,30,29,28,27,26,25,24,23,22,21,20,19,18,17,16,15,14,13,12,11,10,9,8,7,6,5,4,3,2,1,0]},{"unit":11,"cycles":[1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55,56,57,58,59],"rul":[58,57,56,55,54,53,52,51,50,49,48,47,46,45,44,43,42,41,40,39,38,37,36,35,34,33,32,31,30,29,28,27,26,25,24,23,22,21,20,19,18,17,16,15,14,13,12,11,10,9,8,7,6,5,4,3,2,1,0]},{"unit":14,"cycles":[1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55,56,57,58,59,60,61,62,63,64,65,66,67,68,69,70,71,72,73,74,75,76],"rul":[75,74,73,72,71,70,69,68,67,66,65,64,63,62,61,60,59,58,57,56,55,54,53,52,51,50,49,48,47,46,45,44,43,42,41,40,39,38,37,36,35,34,33,32,31,30,29,28,27,26,25,24,23,22,21,20,19,18,17,16,15,14,13,12,11,10,9,8,7,6,5,4,3,2,1,0]},{"unit":15,"cycles":[1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55,56,57,58,59,60,61,62,63,64,65,66,67],"rul":[66,65,64,63,62,61,60,59,58,57,56,55,54,53,52,51,50,49,48,47,46,45,44,43,42,41,40,39,38,37,36,35,34,33,32,31,30,29,28,27,26,25,24,23,22,21,20,19,18,17,16,15,14,13,12,11,10,9,8,7,6,5,4,3,2,1,0]},{"unit":16,"cycles":[1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55,56,57,58,59,60,61,62,63],"rul":[62,61,60,59,58,57,56,55,54,53,52,51,50,49,48,47,46,45,44,43,42,41,40,39,38,37,36,35,34,33,32,31,30,29,28,27,26,25,24,23,22,21,20,19,18,17,16,15,14,13,12,11,10,9,8,7,6,5,4,3,2,1,0]},{"unit":18,"cycles":[1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55,56,57,58,59,60,61,62,63,64,65,66,67,68,69,70,71],"rul":[70,69,68,67,66,65,64,63,62,61,60,59,58,57,56,55,54,53,52,51,50,49,48,47,46,45,44,43,42,41,40,39,38,37,36,35,34,33,32,31,30,29,28,27,26,25,24,23,22,21,20,19,18,17,16,15,14,13,12,11,10,9,8,7,6,5,4,3,2,1,0]},{"unit":20,"cycles":[1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55,56,57,58,59,60,61,62,63,64,65,66],"rul":[65,64,63,62,61,60,59,58,57,56,55,54,53,52,51,50,49,48,47,46,45,44,43,42,41,40,39,38,37,36,35,34,33,32,31,30,29,28,27,26,25,24,23,22,21,20,19,18,17,16,15,14,13,12,11,10,9,8,7,6,5,4,3,2,1,0]}]};
 
-const N = 80, cx = Array.from({length:N},(_,i)=>i+1);
-
-const sdefs = [
-  { label:'T30 — HPC Outlet Temp',   slope: .13, noise:1.5, c:'#2563eb' },
-  { label:'T48 — HPT Outlet Temp',   slope: .19, noise:1.9, c:'#0891b2' },
-  { label:'Ps30 — HPC Static Pres.', slope:-.11, noise:1.3, c:'#ea580c' },
-  { label:'Wf — Fuel Flow',          slope: .09, noise:1.1, c:'#7c3aed' },
-];
+const sCols = ['#2563eb', '#0891b2', '#ea580c', '#7c3aed'];
+const sKeys = Object.keys(REAL_DATA.sensors);
 const sDs = [];
-sdefs.forEach((sd, i) => {
-  _s = 42 + i * 17;
-  const raw = series(N, 0, sd.slope, sd.noise), avg = roll(raw, 7);
+sKeys.forEach((key, i) => {
+  const s = REAL_DATA.sensors[key], c = sCols[i];
   sDs.push(
-    { label:sd.label, data:raw, borderColor:sd.c+'44', backgroundColor:'transparent', borderWidth:1, pointRadius:0, tension:.3 },
-    { label:sd.label+'~', data:avg, borderColor:sd.c, backgroundColor:'transparent', borderWidth:2, pointRadius:0, tension:.4 }
+    { label:s.label, data:s.raw, borderColor:c+'44', backgroundColor:'transparent', borderWidth:1, pointRadius:0, tension:.3 },
+    { label:s.label+'~', data:s.roll, borderColor:c, backgroundColor:'transparent', borderWidth:2, pointRadius:0, tension:.4 }
   );
 });
 new Chart(document.getElementById('sensorChart'), {
-  type:'line', data:{labels:cx, datasets:sDs},
+  type:'line', data:{labels:REAL_DATA.sensor_cycles, datasets:sDs},
   options:{
     responsive:true, animation:false,
     plugins:{
@@ -438,16 +439,15 @@ new Chart(document.getElementById('sensorChart'), {
   }
 });
 
-const engs = [{id:2,r:89},{id:5,r:73},{id:10,r:81},{id:11,r:66},{id:14,r:85},{id:15,r:59},{id:16,r:77},{id:18,r:63},{id:20,r:71}];
 const pal  = ['#2563eb','#0891b2','#15803d','#ea580c','#7c3aed','#dc2626','#0369a1','#b45309','#16a34a'];
-const mL   = Math.max(...engs.map(e=>e.r));
+const mL   = Math.max(...REAL_DATA.rul_units.map(u => Math.max(...u.cycles)));
 const rLbl = Array.from({length:mL},(_,i)=>i+1);
-const rDs  = engs.map((eng,i) => {
-  _s = 100 + i * 23;
+const rDs  = REAL_DATA.rul_units.map((u, i) => {
+  const byCycle = Object.fromEntries(u.cycles.map((c, j) => [c, u.rul[j]]));
   return {
-    label:`Engine ${eng.id}`,
-    data: rLbl.map(c => c > eng.r ? null : Math.max(0, parseFloat((eng.r-c+(rnd()-.5)*1.6).toFixed(1)))),
-    borderColor:pal[i], backgroundColor:'transparent', borderWidth:1.8, pointRadius:0, tension:.2, spanGaps:false
+    label:`Engine ${u.unit}`,
+    data: rLbl.map(c => c in byCycle ? byCycle[c] : null),
+    borderColor:pal[i], backgroundColor:'transparent', borderWidth:1.8, pointRadius:0, tension:.1, spanGaps:false
   };
 });
 new Chart(document.getElementById('rulChart'), {
