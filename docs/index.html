@@ -82,6 +82,9 @@
       transition: background .2s, transform .15s;
     }
     .btn:hover { background: var(--blue-dk); transform: translateY(-1px); }
+    .btn-outline { background: var(--white); color: var(--blue); border: 1px solid var(--blue-br); }
+    .btn-outline:hover { background: var(--blue-lt); }
+    .btn-row { display: flex; gap: 0.75rem; flex-wrap: wrap; }
 
     /* Hero stat column */
     .stat-stack { border: 1px solid var(--border); border-radius: 12px; overflow: hidden; box-shadow: var(--shadow-md); }
@@ -252,7 +255,10 @@
         An open-source Remaining Useful Life prediction system synthesizing NASA engine data,
         FAA maintenance records, and BTS flight operations — freely available to every U.S. aviation operator.
       </p>
-      <a href="https://github.com/arnav64/engine-predictive-maintenance" target="_blank" class="btn">View on GitHub ↗</a>
+      <div class="btn-row">
+        <a href="https://github.com/arnav64/engine-predictive-maintenance" target="_blank" class="btn">View on GitHub ↗</a>
+        <a href="dashboard.html" class="btn btn-outline">Explore Results Dashboard ↗</a>
+      </div>
     </div>
     <div class="stat-stack">
       <div class="stat-item">
