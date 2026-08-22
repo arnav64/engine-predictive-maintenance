@@ -1,51 +1,59 @@
 # Predictive Maintenance Framework for Aircraft Engines
 
-An open-source framework for predicting Remaining Useful Life (RUL) of commercial turbofan engines using NASA degradation simulation data, validated against real U.S. operational data from the FAA Service Difficulty Reporting System and BTS on-time performance records. The goal is to translate simulated engine health signals into actionable, cost-aware maintenance scheduling for U.S. air carriers — particularly smaller regional operators who lack access to enterprise predictive maintenance systems.
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
+[![Results Dashboard](https://img.shields.io/badge/Live%20Dashboard-View%20Results-orange)](https://arnav64.github.io/engine-predictive-maintenance/dashboard.html)
 
-## Datasets
+**An open-source framework for predicting Remaining Useful Life (RUL) of commercial turbofan engines, cross-checked against real U.S. operational data.**
 
-| Source | Data | Access |
-|---|---|---|
-| NASA Prognostics Repository | N-CMAPSS DS01, DS02 — run-to-failure turbofan trajectories | `python src/download_data.py` |
-| FAA Service Difficulty Reports | Engine SDR events (JASC 7200 — turbine/turboprop), 2020–2024 | Manual export — see `src/download_faa_sdr.py` |
-| BTS On-Time Performance | Carrier cancellations by airline and month | `python src/bts_groundings.py` |
+---
 
-## Pipeline
+Predicts RUL from NASA's N-CMAPSS turbofan degradation simulation data, then validates that model's practical impact against real FAA Service Difficulty Reports and BTS carrier cancellation records. The goal is to translate simulated engine health signals into actionable, cost-aware maintenance scheduling for U.S. air carriers — particularly smaller regional operators who lack access to enterprise predictive maintenance systems.
 
-Run scripts in order:
+## Getting Started
 
 ```bash
-# 1. Install dependencies
+# Install dependencies
 pip install -r requirements.txt
 
-# 2. Download NASA N-CMAPSS dataset (~15 GB)
+# Download NASA N-CMAPSS dataset (~15 GB)
 python src/download_data.py
 
-# 3. Visualise sensor degradation and RUL trajectories
+# Visualise sensor degradation and RUL trajectories
 python src/explore_ncmapss.py
 
-# 4. Engineer cycle-level features from raw sensor streams
+# Engineer cycle-level features from raw sensor streams
 python src/feature_engineering.py
 
-# 5. Train XGBoost RUL model with leave-one-unit-out cross-validation
+# Train XGBoost RUL model with leave-one-unit-out cross-validation
 python src/train_rul.py
 
-# 6. Download FAA SDR data (follow printed instructions, then re-run)
+# Download FAA SDR data (follow printed instructions, then re-run)
 python src/download_faa_sdr.py --instructions
 python src/download_faa_sdr.py   # after saving the CSV
 
-# 7. Analyse SDR engine failure patterns
+# Analyse SDR engine failure patterns
 python src/analyze_sdr.py
 
-# 8. Download BTS data and compute carrier cancellation baseline
+# Download BTS data and compute carrier cancellation baseline
 python src/bts_groundings.py   # defaults to 2025; --year 2024 also works
 
-# 9. Integrate all three datasets into an impact estimate
+# Integrate all three datasets into an impact estimate
 python src/impact_analysis.py
 
-# 10. (Optional) Sensitivity analysis on the assumptions behind the headline number
+# Sensitivity analysis on the assumptions behind the impact estimate
 python src/sensitivity_analysis.py
 ```
+
+## Visualization
+
+```bash
+# Build the interactive results dashboard (generates docs/dashboard.html)
+python viz/build_dashboard.py
+```
+
+`viz/build_dashboard.py` reads the CSVs in `results/` and `data/processed/features_DS02.parquet`, builds a set of Plotly charts from that real pipeline output, and writes a self-contained HTML file to `docs/dashboard.html`.
+
+To publish: enable GitHub Pages in repo Settings → Pages → Source: main branch, `/docs` folder.
 
 ## Architecture
 
@@ -57,11 +65,11 @@ python src/sensitivity_analysis.py
 
 **Model:** XGBoost regressor. RUL labels are piece-wise linear capped at 125 cycles (standard in the literature). Evaluated with leave-one-unit-out cross-validation so the model is never tested on engines it saw during training.
 
-**Metrics:** RMSE (cycles) and NASA asymmetric s-score — the s-score penalises late predictions (false confidence) more than early ones. Current CV RMSE: **7.78 cycles (DS01)**, **9.56 cycles (DS02)**.
+**Metrics:** RMSE (cycles) and NASA asymmetric s-score — the s-score penalises late predictions (false confidence) more than early ones.
 
 ### FAA SDR Analysis (`src/download_faa_sdr.py` → `src/analyze_sdr.py`)
 
-Filters the public FAA Service Difficulty Reporting System for JASC code 7200 (engine — turbine/turboprop), 2020–2024 (1,533 cleaned events after dropping non-carrier and malformed records). Tabulates event counts by ATA chapter, affected aircraft model, and annual trend. This is used as real-world validation that engine failures are a substantial, persistent share of maintenance events — not as an additional discount factor on the literature engine-fraction baseline (see Impact Analysis below for why).
+Filters the public FAA Service Difficulty Reporting System for JASC code 7200 (engine — turbine/turboprop), 2020–2024. Tabulates event counts by ATA chapter, affected aircraft model, and annual trend. Used as real-world validation that engine failures are a substantial, persistent share of maintenance events — not as an additional discount factor on the literature engine-fraction baseline (see Impact Analysis below for why).
 
 ### BTS Groundings Baseline (`src/bts_groundings.py`)
 
@@ -74,16 +82,7 @@ Combines:
 2. **Engine fraction** — share of carrier cancellations attributable to engine/mechanical issues. Uses the literature baseline (~18%, BTS Air Carrier cause category / NAS delay-attribution studies) directly, unadjusted. An earlier version of this pipeline further multiplied this by an SDR-derived "unplanned fraction," but that number was a recurrence-timing proxy with no ground-truth label behind it, and the 18% baseline already represents mechanical/engine cancellations specifically — which are effectively unplanned by construction (a scheduled maintenance finding gets an aircraft swap, not a cancellation). Applying an extra "unplanned" discount was double-counting the same thing twice, so it was removed.
 3. **BTS baseline** — total annual carrier cancellations per operator.
 
-Outputs per-carrier estimates of avoidable cancellations and the projected system-wide reduction in unplanned groundings. Run `src/sensitivity_analysis.py` to see how this estimate moves across a defensible range of engine-fraction and warning-window assumptions.
-
-## Results
-
-Current end-to-end estimate (RUL model on N-CMAPSS DS02, FAA SDR 2020–2024, BTS carrier cancellations):
-
-- **12.3% of carrier cancellations avoidable system-wide** — 2,586 of 21,073 annual carrier-caused cancellations, projected across 14 carriers.
-- Driven by a 68.1% RUL detection rate (9.56-cycle CV RMSE against a 30-cycle warning window) and an 18% literature engine-fraction baseline.
-- Delta has the largest absolute avoidable count (742/year); all major carriers cluster within a point or two of the 12.3% system-wide rate, since detection rate and engine fraction are applied uniformly.
-- `src/sensitivity_analysis.py` shows this estimate is not especially sensitive to small assumption changes: reaching materially higher reduction rates (15%+) requires either an engine fraction above the top of the range found in a literature check (~26%, and only from a source with a different denominator than "carrier cancellations") or a RUL warning window well beyond what the model's current accuracy supports. See `results/sensitivity_grid.csv` and `results/sensitivity_heatmap.png`.
+Outputs per-carrier estimates of avoidable cancellations and the projected system-wide reduction in unplanned groundings. `src/sensitivity_analysis.py` shows how this estimate moves across a defensible range of engine-fraction and warning-window assumptions. Current results are on the [live dashboard](https://arnav64.github.io/engine-predictive-maintenance/dashboard.html), not reproduced here, since they change as the pipeline is rerun on new data.
 
 ## Repository Structure
 
@@ -103,7 +102,8 @@ engine-predictive-maintenance/
 │   ├── bts_groundings.py      # BTS carrier cancellation baseline
 │   ├── impact_analysis.py     # End-to-end impact estimate
 │   └── sensitivity_analysis.py # Assumption sweep + methodology checks
-├── results/          # Plots and CSVs (charts committed, large data gitignored)
+├── viz/               # Interactive results dashboard builder
+├── results/           # Plots and CSVs (charts committed, large data gitignored)
 ├── requirements.txt
 └── README.md
 ```
