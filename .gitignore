@@ -4,5 +4,5 @@ __pycache__
 .ipynb_checkpoints
 *.pyc
 .DS_Store
-results/*.png
-results/*.csv
+# keep results out by default but allow key outputs
+results/.gitkeep
